@@ -45,12 +45,23 @@ class GameScene extends Phaser.Scene {
       fill: "#fff",
     });
 
-    this.currentWordText = this.add.text(10, 50, this.currentWord, {
-      fontSize: "32px",
-      fill: "#fff",
-    });
+    this.currentWordText = this.add.text(
+      sizes.width / 2 - 100,
+      sizes.height - 150,
+      this.currentWord,
+      {
+        fontSize: "32px",
+        fill: "#fff",
+      }
+    );
 
     this.input.keyboard.on("keydown", (event) => {
+      if (event.key === "Backspace") {
+        this.currentWord = this.currentWord.slice(0, -1);
+        this.currentWordText.setText(this.currentWord);
+        return;
+      }
+
       this.currentWord += event.key;
 
       this.currentWordText.setText(this.currentWord);
