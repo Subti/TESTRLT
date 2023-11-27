@@ -46,6 +46,10 @@ class GameScene extends Phaser.Scene {
           .create(randomX, 10, "invisibleSprite")
           .setScale(0.5);
 
+        this.targetWordSprite.body.setAllowGravity(false);
+
+        this.targetWordSprite.setVelocityY(speedDown - 100);
+
         this.targetWordText = this.add.text(10, 10, this.targetWord, {
           fontSize: "32px",
           fill: "#fff",
@@ -92,6 +96,11 @@ class GameScene extends Phaser.Scene {
     if (this.targetWordSprite && this.targetWordText) {
       this.targetWordText.x = this.targetWordSprite.x;
       this.targetWordText.y = this.targetWordSprite.y;
+    }
+
+    if (this.targetWordSprite && this.targetWordSprite.y > sizes.height) {
+      this.targetWordSprite.setY(0);
+      this.targetWordText.setY(0);
     }
   }
 }
