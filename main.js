@@ -2,7 +2,7 @@ import "./style.css";
 import Phaser from "phaser";
 
 const sizes = {
-  width: 600,
+  width: 1200,
   height: 600,
 };
 
@@ -29,19 +29,21 @@ class GameScene extends Phaser.Scene {
     });
   }
   create() {
-    this.add.image(0, 0, "bg");
+    this.add.image(0, 0, "bg").setOrigin(0, 0);
 
     this.currentWord = "";
 
     this.words = this.physics.add.group();
 
-    fetch("https://random-word-api.vercel.app/api?words=1&length=5")
+    fetch("https://random-word-api.vercel.app/api?words=1&length=9")
       .then((response) => response.json())
       .then((data) => {
         this.targetWord = data[0];
 
+        const randomX = Phaser.Math.Between(0, 1025);
+
         this.targetWordSprite = this.words
-          .create(10, 10, "invisibleSprite")
+          .create(randomX, 10, "invisibleSprite")
           .setScale(0.5);
 
         this.targetWordText = this.add.text(10, 10, this.targetWord, {
