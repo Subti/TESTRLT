@@ -31,19 +31,24 @@ class GameScene extends Phaser.Scene {
   create() {
     this.add.image(0, 0, "bg");
 
-    this.targetWord = "example";
     this.currentWord = "";
 
     this.words = this.physics.add.group();
 
-    this.targetWordSprite = this.words
-      .create(10, 10, "invisibleSprite")
-      .setScale(0.5);
+    fetch("https://random-word-api.vercel.app/api?words=1&length=5")
+      .then((response) => response.json())
+      .then((data) => {
+        this.targetWord = data[0];
 
-    this.targetWordText = this.add.text(10, 10, this.targetWord, {
-      fontSize: "32px",
-      fill: "#fff",
-    });
+        this.targetWordSprite = this.words
+          .create(10, 10, "invisibleSprite")
+          .setScale(0.5);
+
+        this.targetWordText = this.add.text(10, 10, this.targetWord, {
+          fontSize: "32px",
+          fill: "#fff",
+        });
+      });
 
     this.currentWordText = this.add.text(
       sizes.width / 2 - 100,
@@ -82,8 +87,10 @@ class GameScene extends Phaser.Scene {
     this.cursorKeys = this.input.keyboard.createCursorKeys();
   }
   update() {
-    this.targetWordText.x = this.targetWordSprite.x;
-    this.targetWordText.y = this.targetWordSprite.y;
+    if (this.targetWordSprite && this.targetWordText) {
+      this.targetWordText.x = this.targetWordSprite.x;
+      this.targetWordText.y = this.targetWordSprite.y;
+    }
   }
 }
 
