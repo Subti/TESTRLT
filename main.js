@@ -87,14 +87,15 @@ class GameScene extends Phaser.Scene {
     //this is the event listener for when the player types something and handles what will happen when they type something
     this.input.keyboard.on("keydown", (event) => {
 
-      if (event.keyCode === 8 && this.currentWord.length > 0) {
-        console.log(this.currentWord);
+      if (event.code === 'Backspace' && this.currentWord.length > 0) {
+        console.log(event.code.length);
         this.currentWord = this.currentWord.slice(0, this.currentWord.length - 1);
         this.currentWordText.setText(this.currentWord);
       }
-      else if (event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) {
+      else if (event.code.length === 4) {
 
         this.currentWord += event.key;
+
 
         this.currentWordText.setText(this.currentWord);
 
@@ -107,7 +108,6 @@ class GameScene extends Phaser.Scene {
         }
       }
     });
-
 
     this.player = this.add
       .sprite(sizes.width / 2, sizes.height - 100, "player")
