@@ -15,6 +15,7 @@ class GameScene extends Phaser.Scene {
   constructor() {
     super("scene-game");
     this.player;
+    this.activeWords = [];
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
@@ -35,43 +36,23 @@ class GameScene extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    //add background image
-    this.add.image(0, 0, "bg").setOrigin(0, 0);
-
     //this initializes what the player is currently typing
     this.currentWord = "";
+
+    //Load a word at random intervals of 1-3 seconds
+    this.time.addEvent({
+      delay: Phaser.Math.Between(1000, 3000),
+      callback: this.loadWord,
+      callbackScope: this,
+      loop: true,
+    });
+
+    //add background image
+    this.add.image(0, 0, "bg").setOrigin(0, 0);
 
     //this is required for the physics engine to work (words can not be added to physics engine without this)
     //it is essentially a group of sprites that can be added to the physics engine and the words follow those sprites
     this.words = this.physics.add.group();
-
-    //get request to fetch a random word from the random word api (https://random-word-api.vercel.app/)
-    fetch("https://random-word-api.vercel.app/api?words=1&length=9")
-      .then((response) => response.json())
-      .then((data) => {
-        this.targetWord = data[0];
-
-        //randomize the x position of the word (so it doesn't always start in the same place) relative to gameCanvas (to be done)
-        const randomX = Phaser.Math.Between(0, 1025);
-
-        //create the word sprite (invisibleSprite is just so the background is not covered by anything weird)
-        //y 10 is so the word starts at the top of the screen, randomX is for the x position.
-        this.targetWordSprite = this.words
-          .create(randomX, 10, "invisibleSprite")
-          .setScale(0.5);
-
-        //this is so we disable gravity on the word sprite (so it doesn't accelerate)
-        this.targetWordSprite.body.setAllowGravity(false);
-
-        //this is the speed at which the word will fall down (it scales off speedDown for difficulty scaling purposes later)
-        this.targetWordSprite.setVelocityY(speedDown - 90);
-
-        //this is the text that will be displayed on the word sprite the initialization does not really matter, but the styling etc will be done here
-        this.targetWordText = this.add.text(10, 10, this.targetWord, {
-          fontSize: "32px",
-          fill: "#fff",
-        });
-      });
 
     //same as last text thing but this time for what the player types
     this.currentWordText = this.add.text(
@@ -88,11 +69,9 @@ class GameScene extends Phaser.Scene {
     this.input.keyboard.on("keydown", (event) => {
       if (event.key === "Backspace") {
         this.currentWord = this.currentWord.slice(0, -1);
-        this.currentWordText.setText(this.currentWord);
-        return;
+      } else if (event.key.length === 1 && /^[a-z0-9]$/i.test(event.key)) {
+        this.currentWord += event.key;
       }
-
-      this.currentWord += event.key;
 
       this.currentWordText.setText(this.currentWord);
 
@@ -112,16 +91,53 @@ class GameScene extends Phaser.Scene {
     this.cursorKeys = this.input.keyboard.createCursorKeys();
   }
 
+  loadWord() {
+    fetch("https://random-word-api.vercel.app/api?words=1&length=5")
+      .then((response) => response.json())
+      .then((data) => {
+        const word = data[0];
+
+        const sprite = this.words
+          .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
+          .setScale(0.5)
+          .setVelocityY(speedDown - 90);
+        sprite.body.setAllowGravity(false);
+
+        const text = this.add.text(10, 10, word, {
+          fontSize: "32px",
+          fill: "#fff",
+        });
+
+        this.activeWords.push({ sprite, text, word });
+      });
+  }
+
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
   update() {
-    if (this.targetWordSprite && this.targetWordText) {
-      this.targetWordText.x = this.targetWordSprite.x;
-      this.targetWordText.y = this.targetWordSprite.y;
+    for (let i = 0; i < this.activeWords.length; i++) {
+      this.activeWords[i].text.x = this.activeWords[i].sprite.x;
+      this.activeWords[i].text.y = this.activeWords[i].sprite.y;
     }
 
     if (this.targetWordSprite && this.targetWordSprite.y > sizes.height) {
       this.targetWordSprite.setY(0);
       this.targetWordText.setY(0);
+    }
+
+    // Check if the current word matches any active word
+    for (let i = 0; i < this.activeWords.length; i++) {
+      if (this.currentWord === this.activeWords[i].word) {
+        // Remove the word from the screen and the array
+        this.activeWords[i].sprite.destroy();
+        this.activeWords[i].text.destroy();
+        this.activeWords.splice(i, 1);
+
+        // Clear the current word
+        this.currentWord = "";
+        this.currentWordText.setText(this.currentWord);
+
+        break;
+      }
     }
   }
 }
