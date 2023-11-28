@@ -44,7 +44,7 @@ class GameScene extends Phaser.Scene {
       delay: Phaser.Math.Between(1000, 3000),
       callback: this.loadWord,
       callbackScope: this,
-      loop: true,
+      loop: false,
     });
 
     //add background image
@@ -117,11 +117,6 @@ class GameScene extends Phaser.Scene {
     for (let i = 0; i < this.activeWords.length; i++) {
       this.activeWords[i].text.x = this.activeWords[i].sprite.x;
       this.activeWords[i].text.y = this.activeWords[i].sprite.y;
-    }
-
-    if (this.targetWordSprite && this.targetWordSprite.y > sizes.height) {
-      this.targetWordSprite.setY(0);
-      this.targetWordText.setY(0);
     }
 
     // Check if the current word matches any active word
