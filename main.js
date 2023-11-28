@@ -16,6 +16,7 @@ class GameScene extends Phaser.Scene {
     super("scene-game");
     this.player;
     this.activeWords = [];
+    this.calledWords = [];
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
@@ -36,16 +37,24 @@ class GameScene extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
+    //batch call the api to get a bunch of words at once
+    fetch("https://random-word-api.vercel.app/api?words=5&length=5")
+      .then((response) => response.json())
+      .then((data) => {
+        this.calledWords = data;
+
+        //Load a word at random intervals of 1-3 seconds
+        this.time.addEvent({
+          delay: Phaser.Math.Between(1000, 3000),
+          callback: this.loadWord,
+          callbackScope: this,
+          loop: false,
+          repeat: this.calledWords.length - 1,
+        });
+      });
+
     //this initializes what the player is currently typing
     this.currentWord = "";
-
-    //Load a word at random intervals of 1-3 seconds
-    this.time.addEvent({
-      delay: Phaser.Math.Between(1000, 3000),
-      callback: this.loadWord,
-      callbackScope: this,
-      loop: false,
-    });
 
     //add background image
     this.add.image(0, 0, "bg").setOrigin(0, 0);
@@ -92,24 +101,20 @@ class GameScene extends Phaser.Scene {
   }
 
   loadWord() {
-    fetch("https://random-word-api.vercel.app/api?words=1&length=5")
-      .then((response) => response.json())
-      .then((data) => {
-        const word = data[0];
+    const word = this.calledWords.pop();
 
-        const sprite = this.words
-          .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
-          .setScale(0.5)
-          .setVelocityY(speedDown - 90);
-        sprite.body.setAllowGravity(false);
+    const sprite = this.words
+      .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
+      .setScale(0.5)
+      .setVelocityY(speedDown - 90);
+    sprite.body.setAllowGravity(false);
 
-        const text = this.add.text(10, 10, word, {
-          fontSize: "32px",
-          fill: "#fff",
-        });
+    const text = this.add.text(10, 10, word, {
+      fontSize: "32px",
+      fill: "#fff",
+    });
 
-        this.activeWords.push({ sprite, text, word });
-      });
+    this.activeWords.push({ sprite, text, word });
   }
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
