@@ -9,6 +9,7 @@ const sizes = {
 
 //universal Y gravity (change to change acceleration)
 const speedDown = 150;
+let isColliding = false;
 
 //define game canvas (what it does)
 class GameScene extends Phaser.Scene {
@@ -23,6 +24,7 @@ class GameScene extends Phaser.Scene {
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
     this.load.image("bg", "assets/bg.jpg");
+    this.load.image("platform", "assets/platform.png");
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
@@ -100,6 +102,13 @@ class GameScene extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
+    this.platform = this.physics.add.staticGroup();
+    this.platform.create(600, 600, "platform").setScale(3).refreshBody();
+    this.words.addCollidesWith(this.platform);
+    this.physics.add.overlap(this.words, this.platform, function () {
+      isColliding = true;
+    });
+
     this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
       fontSize: "32px",
       fill: "#fff",
@@ -127,7 +136,7 @@ class GameScene extends Phaser.Scene {
   update() {
     for (let i = 0; i < this.activeWords.length; i++) {
       this.activeWords[i].text.x = this.activeWords[i].sprite.x;
-      this.activeWords[i].text.y = this.activeWords[i].sprite.y;
+      this.activeWords[i].text.y = this.activeWords[i].sprite.y - 15;
     }
 
     // Check if the current word matches any active word
@@ -145,6 +154,12 @@ class GameScene extends Phaser.Scene {
         this.currentWordText.setText(this.currentWord);
 
         break;
+      }
+      if (isColliding) {
+        this.activeWords[i].sprite.destroy();
+        this.activeWords[i].text.destroy();
+        this.activeWords.splice(i, 1);
+        isColliding = false;
       }
     }
   }
