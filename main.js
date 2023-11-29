@@ -96,18 +96,18 @@ class GameScene extends Phaser.Scene {
       }
     });
 
-    this.player = this.add
-      .sprite(sizes.width / 2, sizes.height - 100, "player")
-      .setOrigin(0, 0);
-
-    this.cursorKeys = this.input.keyboard.createCursorKeys();
-
     this.platform = this.physics.add.staticGroup();
     this.platform.create(600, 600, "platform").setScale(3).refreshBody();
     this.words.addCollidesWith(this.platform);
     this.physics.add.overlap(this.words, this.platform, function () {
       isColliding = true;
     });
+
+    this.player = this.add
+      .sprite(sizes.width / 2, sizes.height - 100, "player")
+      .setOrigin(0, 0);
+
+    this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
       fontSize: "32px",
