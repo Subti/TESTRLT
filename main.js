@@ -9,6 +9,8 @@ const sizes = {
 
 //universal Y gravity (change to change acceleration)
 const speedDown = 150;
+let isColliding = false;
+
 
 //define game canvas (what it does)
 class GameScene extends Phaser.Scene {
@@ -22,6 +24,7 @@ class GameScene extends Phaser.Scene {
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
     this.load.image("bg", "assets/bg.jpg");
+    this.load.image('platform', 'assets/platform.png');
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
@@ -105,6 +108,13 @@ class GameScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+    this.platform = this.physics.add.staticGroup();
+    this.platform.create(600, 600, 'platform').setScale(3).refreshBody();
+    this.words.addCollidesWith(this.platform);
+    this.physics.add.overlap(this.words, this.platform,function () {
+      isColliding = true;
+    });
   }
 
   loadWord() {
@@ -144,6 +154,12 @@ class GameScene extends Phaser.Scene {
         this.currentWordText.setText(this.currentWord);
 
         break;
+      }
+      if(isColliding){
+        this.activeWords[i].sprite.destroy();
+        this.activeWords[i].text.destroy();
+        this.activeWords.splice(i, 1);
+        isColliding = false
       }
     }
   }
