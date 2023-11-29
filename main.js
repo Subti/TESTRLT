@@ -11,7 +11,6 @@ const sizes = {
 const speedDown = 150;
 let isColliding = false;
 
-
 //define game canvas (what it does)
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -19,13 +18,13 @@ class GameScene extends Phaser.Scene {
     this.player;
     this.activeWords = [];
     this.calledWords = [];
+    this.points = 0;
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
     this.load.image("bg", "assets/bg.jpg");
     this.load.image('platform', 'assets/platform.png');
-    this.load.image("lives", "assets/heart.png");
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
@@ -88,28 +87,28 @@ class GameScene extends Phaser.Scene {
 
     //this is the event listener for when the player types something and handles what will happen when they type something
     this.input.keyboard.on("keydown", (event) => {
-      
-      event.preventDefault()
-      if (event.code === 'Backspace' && this.currentWord.length > 0) {
-        console.log(event.code.length);
-        this.currentWord = this.currentWord.slice(0, this.currentWord.length - 1);
-        this.currentWordText.setText(this.currentWord);
-      }
-      else if (event.code.length === 4) {
-
+      if (event.key === "Backspace") {
+        this.currentWord = this.currentWord.slice(0, -1);
+      } else if (event.key.length === 1 && /^[a-z0-9]$/i.test(event.key)) {
         this.currentWord += event.key;
+      }
 
+      this.currentWordText.setText(this.currentWord);
 
+      if (this.currentWord === this.targetWord) {
+        this.currentWord = "";
         this.currentWordText.setText(this.currentWord);
 
-        if (this.currentWord === this.targetWord) {
-          this.currentWord = "";
-          this.currentWordText.setText(this.currentWord);
-
-          this.targetWordText.destroy();
-          this.targetWordSprite.destroy();
-        }
+        this.targetWordText.destroy();
+        this.targetWordSprite.destroy();
       }
+    });
+
+    this.platform = this.physics.add.staticGroup();
+    this.platform.create(600, 600, "platform").setScale(3).refreshBody();
+    this.words.addCollidesWith(this.platform);
+    this.physics.add.overlap(this.words, this.platform, function () {
+      isColliding = true;
     });
 
     this.player = this.add
@@ -118,11 +117,9 @@ class GameScene extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-    this.platform = this.physics.add.staticGroup();
-    this.platform.create(600, 600, 'platform').setScale(3).refreshBody();
-    this.words.addCollidesWith(this.platform);
-    this.physics.add.overlap(this.words, this.platform,function () {
-      isColliding = true;
+    this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
+      fontSize: "32px",
+      fill: "#fff",
     });
   }
 
@@ -147,12 +144,14 @@ class GameScene extends Phaser.Scene {
   update() {
     for (let i = 0; i < this.activeWords.length; i++) {
       this.activeWords[i].text.x = this.activeWords[i].sprite.x;
-      this.activeWords[i].text.y = this.activeWords[i].sprite.y;
+      this.activeWords[i].text.y = this.activeWords[i].sprite.y - 15;
     }
 
     // Check if the current word matches any active word
     for (let i = 0; i < this.activeWords.length; i++) {
       if (this.currentWord === this.activeWords[i].word) {
+        this.points += 10 * this.currentWord.length;
+        this.textScore.setText(`Score: ${this.points}`);
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
@@ -164,17 +163,11 @@ class GameScene extends Phaser.Scene {
 
         break;
       }
-      if(isColliding){
+      if (isColliding) {
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
         this.activeWords.splice(i, 1);
         isColliding = false
-
-        this[`livesImg${this.lives-1}`].destroy()
-        this.lives -=1
-        if (this.lives === 0) {
-          console.log("Game over");
-        }
       }
     }
   }
