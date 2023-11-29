@@ -1,41 +1,20 @@
-import "./style.css";
-import Phaser from "phaser";
-import { Level1 } from "./levels/level1.js";
-import { TestLevel } from "./levels/testLevel.js";
-
-//Size of game world
 const sizes = {
   width: 1200,
   height: 600,
 };
 
-let speedDown = 150;
-
-class MenuScene extends Phaser.Scene {
-  constructor() {
-    super("scene-menu");
-  }
-
-  create() {
-    this.registry.set("points", 0);
-    this.registry.set("speedDown", 150);
-    this.registry.set("isColliding", false);
-    this.registry.set("lives", 3);
-
-    const startButton = this.add
-      .text(600, 300, "Start Game", { fill: "#0f0" })
-      .setInteractive()
-      .on("pointerdown", () => this.scene.start("scene-game")); // Start GameScene when the start button is clicked
-  }
-}
-
 //define game canvas (what it does)
-class GameScene extends Phaser.Scene {
-  constructor() {
-    super("scene-game");
+export class BaseLevel extends Phaser.Scene {
+  constructor(key, wordLength, wordQuantity, fallSpeed) {
+    super(key);
+    this.wordLength = wordLength;
+    this.wordQuantity = wordQuantity;
+    this.fallSpeed = fallSpeed;
     this.player;
     this.activeWords = [];
     this.calledWords = [];
+    this.width = 1200;
+    this.height = 600;
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
@@ -54,8 +33,12 @@ class GameScene extends Phaser.Scene {
       endFrame: 0,
     });
 
+    this.registry.set("loaded", false);
+
     //batch call the api to get a bunch of words at once
-    fetch("https://random-word-api.vercel.app/api?words=5&length=5")
+    fetch(
+      `https://random-word-api.vercel.app/api?words=${this.wordQuantity}&length=${this.wordLength}`
+    )
       .then((response) => response.json())
       .then((data) => {
         this.calledWords = data;
@@ -87,8 +70,8 @@ class GameScene extends Phaser.Scene {
 
     //same as last text thing but this time for what the player types
     this.currentWordText = this.add.text(
-      sizes.width / 2 - 100,
-      sizes.height - 150,
+      this.width / 2 - 100,
+      this.height - 150,
       this.currentWord,
       {
         fontSize: "32px",
@@ -123,15 +106,20 @@ class GameScene extends Phaser.Scene {
     });
 
     this.player = this.add
-      .sprite(sizes.width / 2, sizes.height - 100, "player")
+      .sprite(this.width / 2, this.height - 100, "player")
       .setOrigin(0, 0);
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-    this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
-      fontSize: "32px",
-      fill: "#fff",
-    });
+    this.textScore = this.add.text(
+      this.width - 200,
+      10,
+      `Score: ${this.registry.get("points")}`,
+      {
+        fontSize: "32px",
+        fill: "#fff",
+      }
+    );
   }
 
   loadWord() {
@@ -140,7 +128,7 @@ class GameScene extends Phaser.Scene {
     const sprite = this.words
       .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
       .setScale(0.5)
-      .setVelocityY(this.registry.get("speedDown") - 90);
+      .setVelocityY(this.fallSpeed);
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
@@ -194,54 +182,5 @@ class GameScene extends Phaser.Scene {
       // Transition to loss scene
       this.scene.start("LossScene");
     }
-
-    // Check for win condition
-    if (
-      this.calledWords.length === 0 &&
-      this.activeWords.length === 0 &&
-      this.registry.get("lives") > 0
-    ) {
-      // Transition to win scene
-      this.scene.start("Level1");
-    }
   }
 }
-
-class WinScene extends Phaser.Scene {
-  constructor() {
-    super({ key: "WinScene" });
-  }
-
-  create() {
-    this.add.text(100, 100, "You win!", { fontSize: "32px", fill: "#fff" });
-  }
-}
-
-class LossScene extends Phaser.Scene {
-  constructor() {
-    super({ key: "LossScene" });
-  }
-
-  create() {
-    this.add.text(100, 100, "You lose!", { fontSize: "32px", fill: "#fff" });
-  }
-}
-
-//define game config (how it looks and works this is what players would change in settings)
-//for example if a player wants the game to be "easier" it could just be an option to use a lower gravity
-const config = {
-  type: Phaser.WEBGL,
-  width: sizes.width,
-  height: sizes.height,
-  canvas: gameCanvas,
-  physics: {
-    default: "arcade",
-    arcade: {
-      gravity: { y: speedDown },
-      debug: true,
-    },
-  },
-  scene: [MenuScene, GameScene, Level1, WinScene, LossScene],
-};
-
-const game = new Phaser.Game(config);
