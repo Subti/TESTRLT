@@ -273,7 +273,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [GameScene],
+  scene: [MainScene,WinScene,LossScene],
 };
 
 const game = new Phaser.Game(config);
