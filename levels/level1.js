@@ -1,11 +1,15 @@
+const sizes = {
+  width: 1200,
+  height: 600,
+};
+
 //define game canvas (what it does)
-export class level1 extends Phaser.Scene {
+export class Level1 extends Phaser.Scene {
   constructor() {
-    super("scene-game");
+    super("Level1");
     this.player;
     this.activeWords = [];
     this.calledWords = [];
-    this.points = 0;
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
@@ -23,15 +27,16 @@ export class level1 extends Phaser.Scene {
       startFrame: 0,
       endFrame: 0,
     });
-  }
 
-  //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
-  create() {
+    this.registry.set("loaded", false);
+
     //batch call the api to get a bunch of words at once
-    fetch("https://random-word-api.vercel.app/api?words=5&length=5")
+    fetch("https://random-word-api.vercel.app/api?words=7&length=7")
       .then((response) => response.json())
       .then((data) => {
         this.calledWords = data;
+
+        this.registry.set("loaded", true);
 
         //Load a word at random intervals of 1-3 seconds
         this.time.addEvent({
@@ -42,7 +47,10 @@ export class level1 extends Phaser.Scene {
           repeat: this.calledWords.length - 1,
         });
       });
+  }
 
+  //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
+  create() {
     //this initializes what the player is currently typing
     this.currentWord = "";
 
@@ -86,8 +94,8 @@ export class level1 extends Phaser.Scene {
     this.platform = this.physics.add.staticGroup();
     this.platform.create(600, 600, "platform").setScale(3).refreshBody();
     this.words.addCollidesWith(this.platform);
-    this.physics.add.overlap(this.words, this.platform, function () {
-      isColliding = true;
+    this.physics.add.overlap(this.words, this.platform, () => {
+      this.registry.set("isColliding", true);
     });
 
     this.player = this.add
@@ -96,10 +104,15 @@ export class level1 extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-    this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
-      fontSize: "32px",
-      fill: "#fff",
-    });
+    this.textScore = this.add.text(
+      sizes.width - 200,
+      10,
+      `Score: ${this.registry.get("points")}`,
+      {
+        fontSize: "32px",
+        fill: "#fff",
+      }
+    );
   }
 
   loadWord() {
@@ -108,7 +121,7 @@ export class level1 extends Phaser.Scene {
     const sprite = this.words
       .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
       .setScale(0.5)
-      .setVelocityY(speedDown - 90);
+      .setVelocityY(this.registry.get("speedDown") - 90);
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
@@ -121,6 +134,10 @@ export class level1 extends Phaser.Scene {
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
   update() {
+    if (!this.registry.get("loaded")) {
+      return;
+    }
+
     for (let i = 0; i < this.activeWords.length; i++) {
       this.activeWords[i].text.x = this.activeWords[i].sprite.x;
       this.activeWords[i].text.y = this.activeWords[i].sprite.y - 15;
@@ -129,8 +146,11 @@ export class level1 extends Phaser.Scene {
     // Check if the current word matches any active word
     for (let i = 0; i < this.activeWords.length; i++) {
       if (this.currentWord === this.activeWords[i].word) {
-        this.points += 10 * this.currentWord.length;
-        this.textScore.setText(`Score: ${this.points}`);
+        this.registry.set(
+          "points",
+          this.registry.get("points") + 10 * this.currentWord.length
+        );
+        this.textScore.setText(`Score: ${this.registry.get("points")}`);
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
@@ -142,12 +162,28 @@ export class level1 extends Phaser.Scene {
 
         break;
       }
-      if (isColliding) {
+      if (this.registry.get("isColliding")) {
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
         this.activeWords.splice(i, 1);
-        isColliding = false;
+        this.registry.set("isColliding", false);
+        this.registry.set("lives", this.registry.get("lives") - 1);
       }
+    }
+    // Check for loss condition
+    if (this.registry.get("lives") <= 0) {
+      // Transition to loss scene
+      this.scene.start("LossScene");
+    }
+
+    // Check for win condition
+    if (
+      this.calledWords.length === 0 &&
+      this.activeWords.length === 0 &&
+      this.registry.get("lives") > 0
+    ) {
+      // Transition to win scene
+      this.scene.start("WinScene");
     }
   }
 }

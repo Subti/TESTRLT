@@ -1,5 +1,6 @@
 import "./style.css";
 import Phaser from "phaser";
+import { Level1 } from "./levels/level1.js";
 
 //Size of game world
 const sizes = {
@@ -187,7 +188,7 @@ class GameScene extends Phaser.Scene {
       this.registry.get("lives") > 0
     ) {
       // Transition to win scene
-      this.scene.start("WinScene");
+      this.scene.start("Level1");
     }
   }
 }
@@ -226,7 +227,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [GameScene, WinScene, LossScene],
+  scene: [GameScene, Level1, WinScene, LossScene],
 };
 
 const game = new Phaser.Game(config);
