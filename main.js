@@ -25,6 +25,7 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image("bg", "assets/bg.jpg");
     this.load.image('platform', 'assets/platform.png');
+    this.load.image("lives", "assets/heart.png");
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
@@ -61,6 +62,14 @@ class GameScene extends Phaser.Scene {
 
     //add background image
     this.add.image(0, 0, "bg").setOrigin(0, 0);
+
+    //add heart image for amount of lives
+    for (let i = 0; i< this.lives; i++) {
+
+      // `livesImg${i}` to uniquely identify each heart img 
+      this[`livesImg${i}`] = this.add.image(50+i*10, 50, "lives")
+      
+    }
 
     //this is required for the physics engine to work (words can not be added to physics engine without this)
     //it is essentially a group of sprites that can be added to the physics engine and the words follow those sprites
@@ -160,6 +169,12 @@ class GameScene extends Phaser.Scene {
         this.activeWords[i].text.destroy();
         this.activeWords.splice(i, 1);
         isColliding = false
+
+        this[`livesImg${this.lives-1}`].destroy()
+        this.lives -=1
+        if (this.lives === 0) {
+          console.log("Game over");
+        }
       }
     }
   }
