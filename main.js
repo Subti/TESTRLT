@@ -17,6 +17,7 @@ class GameScene extends Phaser.Scene {
     this.player;
     this.activeWords = [];
     this.calledWords = [];
+    this.points = 0;
   }
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
@@ -98,6 +99,11 @@ class GameScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+    this.textScore = this.add.text(sizes.width - 200, 10, "Score: 0", {
+      fontSize: "32px",
+      fill: "#fff",
+    });
   }
 
   loadWord() {
@@ -127,6 +133,8 @@ class GameScene extends Phaser.Scene {
     // Check if the current word matches any active word
     for (let i = 0; i < this.activeWords.length; i++) {
       if (this.currentWord === this.activeWords[i].word) {
+        this.points += 10 * this.currentWord.length;
+        this.textScore.setText(`Score: ${this.points}`);
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
