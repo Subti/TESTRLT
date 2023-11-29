@@ -17,8 +17,12 @@ export class BaseLevel extends Phaser.Scene {
   preload() {
     this.load.image("bg", "assets/bg");
     this.load.image("platform", "assets/platform.png");
-    this.load.image("invisibleSprite", "assets/invisibleSprite.png",{frameWidth: 32});
-    this.load.spritesheet("player", "assets/player.png", {
+    this.load.spritesheet("invisibleSprite", "assets/invisibleSprite.png",{
+      frameWidth: 50,
+      frameHeight: 50,
+      startFrame: 0,
+      endFrame: 0,
+    });    this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
     });
