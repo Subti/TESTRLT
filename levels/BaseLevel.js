@@ -2,6 +2,7 @@
 export class BaseLevel extends Phaser.Scene {
   constructor(key, wordLength, wordQuantity, fallSpeed, nextSceneKey) {
     super(key);
+    this.levelNumber = this.sys.settings.key.replace("Level", "");
     this.wordLength = wordLength;
     this.wordQuantity = wordQuantity;
     this.fallSpeed = fallSpeed;
@@ -65,11 +66,12 @@ export class BaseLevel extends Phaser.Scene {
 
     //add background image
     this.add.image(0, 0, "bg").setOrigin(0, 0);
+
     // Add score and place in the top right of game canvas
     this.textScore = this.add.text(
-      this.width - 200,
+      this.width / 2,
       10,
-      `Score: ${this.registry.get("points")}`,
+      `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`,
       {
         fontSize: "32px",
         fill: "#fff",
@@ -190,7 +192,9 @@ export class BaseLevel extends Phaser.Scene {
           "points",
           this.registry.get("points") + 10 * this.currentWord.length
         );
-        this.textScore.setText(`Score: ${this.registry.get("points")}`);
+        this.textScore.setText(
+          `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
+        );
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
