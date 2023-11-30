@@ -56,6 +56,13 @@ export class BaseLevel extends Phaser.Scene {
     //this initializes what the player is currently typing
     this.currentWord = "";
 
+    this.timedEvent = this.time.addEvent({
+      delay: 6000000,
+      callback: this.onClockEvent,
+      callbackScope: this,
+      repeat: 1,
+    });
+
     //add background image
     this.add.image(0, 0, "bg").setOrigin(0, 0);
     // Add score and place in the top right of game canvas
@@ -217,6 +224,15 @@ export class BaseLevel extends Phaser.Scene {
       this.activeWords.length === 0 &&
       this.registry.get("lives") > 0
     ) {
+      // Uses timer to add a multiplier
+      this.registry.set(
+        "points",
+        Math.floor(
+          this.registry.get("points") *
+            Math.floor((60 - this.timedEvent.getElapsedSeconds()) / 10)
+        )
+      );
+
       // Transition to win scene
       this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
     }
