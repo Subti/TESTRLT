@@ -5,11 +5,12 @@ const sizes = {
 
 //define game canvas (what it does)
 export class BaseLevel extends Phaser.Scene {
-  constructor(key, wordLength, wordQuantity, fallSpeed) {
+  constructor(key, wordLength, wordQuantity, fallSpeed, nextSceneKey) {
     super(key);
     this.wordLength = wordLength;
     this.wordQuantity = wordQuantity;
     this.fallSpeed = fallSpeed;
+    this.nextSceneKey = nextSceneKey;
     this.player;
     this.activeWords = [];
     this.calledWords = [];
@@ -181,6 +182,11 @@ export class BaseLevel extends Phaser.Scene {
     if (this.registry.get("lives") <= 0) {
       // Transition to loss scene
       this.scene.start("LossScene");
+    }
+
+    // Check for win condition
+    if (this.activeWords.length === 0) {
+      this.scene.start(WinScene, { nextSceneKey: this.nextSceneKey });
     }
   }
 }
