@@ -31,4 +31,4 @@ export class WinScene extends Phaser.Scene {
         .on("pointerdown", () => this.scene.start("scene-menu")); // Go back to MenuScene when the back button is clicked
     }
   }
-};
+}
