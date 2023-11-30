@@ -121,9 +121,21 @@ export class BaseLevel extends Phaser.Scene {
 
     this.platform = this.physics.add.staticGroup();
     this.platform.create(600, 600, "platform").setScale(3).refreshBody();
-    this.words.addCollidesWith(this.platform);
-    this.physics.add.overlap(this.words, this.platform, () => {
-      this.registry.set("isColliding", true);
+    this.physics.add.overlap(this.words, this.platform, (word) => {
+      // Reduce the number of lives
+      this.registry.set("lives", this.registry.get("lives") - 1);
+
+      // Destroy the word sprite
+      word.destroy();
+
+      // Find and destroy the corresponding word text
+      const wordIndex = this.activeWords.findIndex(
+        (activeWord) => activeWord.sprite === word
+      );
+      if (wordIndex !== -1) {
+        this.activeWords[wordIndex].text.destroy();
+        this.activeWords.splice(wordIndex, 1);
+      }
     });
 
     this.player = this.add
@@ -178,6 +190,8 @@ export class BaseLevel extends Phaser.Scene {
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
   update() {
+    console.log(this.registry.get("lives"));
+
     if (!this.registry.get("loaded")) {
       return;
     }
@@ -205,17 +219,6 @@ export class BaseLevel extends Phaser.Scene {
         // Clear the current word
         this.currentWord = "";
         this.currentWordText.setText(this.currentWord);
-
-        break;
-      }
-      if (this.registry.get("isColliding")) {
-        this.activeWords[i].sprite.destroy();
-        this.activeWords[i].text.destroy();
-        this.activeWords.splice(i, 1);
-        this.registry.set("isColliding", false);
-        this.registry.set("lives", this.registry.get("lives") - 1);
-        // Also removes heart from container on collision detection
-        this.livesContainer.remove(this.livesContainer.list[0]);
       }
     }
     // Check for loss condition
