@@ -1,7 +1,7 @@
 import { MenuScene } from "../menus/mainMenu";
 import { WinScene } from "../level-complete/level-pass"
 import { LossScene } from "../level-complete/level-fail"
-import { BaseLevel } from "../levels/BaseLevel100";
+import { BaseLevel } from "../levels/BaseLevel";
 import { Level1 } from "../levels/Level1";
 import { Level2 } from "../levels/Level2";
 //define game config (how it looks and works this is what players would change in settings)

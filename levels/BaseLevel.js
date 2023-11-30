@@ -15,9 +15,13 @@ export class BaseLevel extends Phaser.Scene {
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
-    this.load.image("bg", "assets/bg");
+    this.load.image("bg", "assets/bg.jpg");
     this.load.image("platform", "assets/platform.png");
-    this.load.image("invisibleSprite", "assets/invisibleSprite.png",{frameWidth: 32});
+    this.load.image("hearts", "assets/heart.png")
+    this.load.image("invisibleSprite", "assets/invisibleSprite.png",{
+      frameWidth: 32,
+      frameHeight: 16
+    });
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
@@ -53,7 +57,24 @@ export class BaseLevel extends Phaser.Scene {
 
     //add background image
     this.add.image(0, 0, "bg").setOrigin(0, 0);
-
+    // Add score and place in the top right of game canvas
+    this.textScore = this.add.text(
+      this.width - 200,
+      10,
+      `Score: ${this.registry.get("points")}`,
+      {
+        fontSize: "32px",
+        fill: "#fff",
+      }
+    );
+    // Add container for lives and place in the top left corner of page
+    this.livesContainer = this.add.container(50, 25);
+    // Grabs lives from registry and renders hearts based on remaining lives
+    const livesRemaining = this.registry.get("lives");
+    for(let i = 0; i < livesRemaining; i++) {
+      const hearts = this.add.image(i * 30, 0, 'hearts');
+      this.livesContainer.add(hearts);
+    };
     //this is required for the physics engine to work (words can not be added to physics engine without this)
     //it is essentially a group of sprites that can be added to the physics engine and the words follow those sprites
     this.words = this.physics.add.group();
@@ -114,29 +135,22 @@ export class BaseLevel extends Phaser.Scene {
     });
     // Load player sprite run walk left animation
     this.player.play('walk-left');
+    // Load player walk right after 8 seconds
     this.time.delayedCall(8000, () => {
       this.player.play('walk-right');
     });
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
-
-    this.textScore = this.add.text(
-      this.width - 200,
-      10,
-      `Score: ${this.registry.get("points")}`,
-      {
-        fontSize: "32px",
-        fill: "#fff",
-      }
-    );
   }
-
+  // Function to load words from API call
   loadWord() {
     const word = this.calledWords.pop();
 
     const sprite = this.words
-      .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
-      .setScale(0.5)
+    // Make the max number dynamic if the player decides to expand the game canvas
+      .create(Phaser.Math.Between(0, (this.width - 250)), 10, "invisibleSprite")
+      // set display size instead of set scale, scale made the text collision boxes much larger than the words themselves
+      .setDisplaySize(this.width, 24)
       .setVelocityY(this.fallSpeed);
     sprite.body.setAllowGravity(false);
 
@@ -183,7 +197,9 @@ export class BaseLevel extends Phaser.Scene {
         this.activeWords[i].text.destroy();
         this.activeWords.splice(i, 1);
         this.registry.set("isColliding", false);
-        this.registry.set("lives", this.registry.get("lives") - 1);
+        this.registry.set("lives", this.registry.get("lives") - 1)
+        // Also removes heart from container on collision detection
+        this.livesContainer.remove(this.livesContainer.list[0]);
       }
     }
     // Check for loss condition

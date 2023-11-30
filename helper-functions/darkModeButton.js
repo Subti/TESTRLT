@@ -1,5 +1,3 @@
-// Non-game related functions
-
 const modeToggleButton = document.getElementById('lightDarkMode');
 const modeIcon = document.getElementById('modeIcon');
 const modeLabel = document.getElementById('modeLabel');
