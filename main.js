@@ -2,6 +2,7 @@ import "./style.css";
 import Phaser from "phaser";
 import { Level1 } from "./levels/level1.js";
 import { TestLevel } from "./levels/testLevel.js";
+import { Level0 } from "./levels/level0.js";
 
 //Size of game world
 const sizes = {
@@ -32,7 +33,7 @@ class MenuScene extends Phaser.Scene {
       .text(600, 300, "Start Game", { fontSize: "32px", fill: "#0f0" })
       .setOrigin(0.5, 0.5) // Center align text
       .setInteractive()
-      .on("pointerdown", () => this.scene.start("TestLevel")); // Start GameScene when the start button is clicked
+      .on("pointerdown", () => this.scene.start("Level0")); // Start GameScene when the start button is clicked
   }
 }
 
@@ -69,9 +70,9 @@ class GameScene extends Phaser.Scene {
 
         this.registry.set("loaded", true);
 
-        //Load a word at random intervals of 1-3 seconds
+        //Load a word at random intervals of 0.5-1.5 seconds
         this.time.addEvent({
-          delay: Phaser.Math.Between(1000, 3000),
+          delay: Phaser.Math.Between(500, 1500),
           callback: this.loadWord,
           callbackScope: this,
           loop: false,
@@ -244,7 +245,7 @@ class WinScene extends Phaser.Scene {
         .text(600, 300, "Back to Menu", { fontSize: "32px", fill: "#0f0" })
         .setOrigin(0.5, 0.5)
         .setInteractive()
-        .on("pointerdown", () => this.scene.start("MenuScene")); // Go back to MenuScene when the back button is clicked
+        .on("pointerdown", () => this.scene.start("scene-menu")); // Go back to MenuScene when the back button is clicked
     }
   }
 }
@@ -273,7 +274,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [MenuScene, GameScene, Level1, TestLevel, WinScene, LossScene],
+  scene: [MenuScene, GameScene, Level0, Level1, TestLevel, WinScene, LossScene],
 };
 
 const game = new Phaser.Game(config);

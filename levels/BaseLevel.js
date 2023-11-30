@@ -185,8 +185,13 @@ export class BaseLevel extends Phaser.Scene {
     }
 
     // Check for win condition
-    if (this.activeWords.length === 0) {
-      this.scene.start(WinScene, { nextSceneKey: this.nextSceneKey });
+    if (
+      this.calledWords.length === 0 &&
+      this.activeWords.length === 0 &&
+      this.registry.get("lives") > 0
+    ) {
+      // Transition to win scene
+      this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
     }
   }
 }
