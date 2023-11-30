@@ -4,6 +4,6 @@ export class LossScene extends Phaser.Scene {
   }
 
   create() {
-    this.add.text(100, 100, "You lose!", { fontSize: "32px", fill: "#fff" });
+    this.add.text(600, 300, "You lose!", { fontSize: "32px", fill: "#fff" }).setOrigin(0.5, 0.5);
   }
 };

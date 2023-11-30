@@ -18,7 +18,7 @@ export class BaseLevel extends Phaser.Scene {
     this.load.image("bg", "assets/bg.jpg");
     this.load.image("platform", "assets/platform.png");
     this.load.image("hearts", "assets/heart.png")
-    this.load.image("invisibleSprite", "assets/invisibleSprite.png",{
+    this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16
     });
@@ -26,6 +26,11 @@ export class BaseLevel extends Phaser.Scene {
       frameWidth: 62,
       frameHeight: 64,
     });
+    // Also from phaser example
+    // this.load.audioSprite('sfx', 'assets/audio/SoundEffects/fx_mixdown.json', [
+    //   'assets/audio/SoundEffects/fx_mixdown.ogg',
+    //   'assets/audio/SoundEffects/fx_mixdown.mp3'
+    // ]);
 
     this.registry.set("loaded", false);
 
@@ -71,7 +76,7 @@ export class BaseLevel extends Phaser.Scene {
     this.livesContainer = this.add.container(50, 25);
     // Grabs lives from registry and renders hearts based on remaining lives
     const livesRemaining = this.registry.get("lives");
-    for(let i = 0; i < livesRemaining; i++) {
+    for (let i = 0; i < livesRemaining; i++) {
       const hearts = this.add.image(i * 30, 0, 'hearts');
       this.livesContainer.add(hearts);
     };
@@ -147,7 +152,7 @@ export class BaseLevel extends Phaser.Scene {
     const word = this.calledWords.pop();
 
     const sprite = this.words
-    // Make the max number dynamic if the player decides to expand the game canvas
+      // Make the max number dynamic if the player decides to expand the game canvas
       .create(Phaser.Math.Between(0, (this.width - 250)), 10, "invisibleSprite")
       // set display size instead of set scale, scale made the text collision boxes much larger than the words themselves
       .setDisplaySize(this.width, 24)

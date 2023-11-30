@@ -1,4 +1,5 @@
 import { MenuScene } from "../menus/mainMenu";
+import { OptionsScene } from "../menus/optionsMenu"
 import { WinScene } from "../level-complete/level-pass"
 import { LossScene } from "../level-complete/level-fail"
 import { BaseLevel } from "../levels/BaseLevel";
@@ -18,5 +19,8 @@ export const canvasConfiguration = {
       debug: true,
     },
   },
-  scene: [MenuScene, BaseLevel, Level1, Level2, WinScene, LossScene],
+  audio: {
+    disableWebAudio: true,
+  },
+  scene: [MenuScene, OptionsScene, BaseLevel, Level1, Level2, WinScene, LossScene],
 };
