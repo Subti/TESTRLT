@@ -163,7 +163,9 @@ export class BaseLevel extends Phaser.Scene {
       .create(Phaser.Math.Between(0, this.width - 250), 10, "invisibleSprite")
       // set display size instead of set scale, scale made the text collision boxes much larger than the words themselves
       .setDisplaySize(this.width, 24)
-      .setVelocityY(this.fallSpeed);
+      .setVelocityY(
+        Phaser.Math.FloatBetween(this.fallSpeed, 1.5 * this.fallSpeed)
+      );
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {

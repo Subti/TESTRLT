@@ -21,4 +21,4 @@ export class MenuScene extends Phaser.Scene {
       .setInteractive()
       .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
   }
-};
+}

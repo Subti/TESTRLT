@@ -12,6 +12,9 @@ export class LossScene extends Phaser.Scene {
     this.add
       .text(100, 300, "Back to Menu", { fontSize: "32px", fill: "#0f0" })
       .setInteractive()
-      .on("pointerdown", () => this.scene.start("scene-menu"));
+      .on("pointerdown", () => {
+        this.registry.set("lives", 3);
+        this.scene.start("scene-menu");
+      });
   }
 }
