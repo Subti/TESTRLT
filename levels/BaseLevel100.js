@@ -1,8 +1,3 @@
-const sizes = {
-  width: 1200,
-  height: 600,
-};
-
 //define game canvas (what it does)
 export class BaseLevel extends Phaser.Scene {
   constructor(key, wordLength, wordQuantity, fallSpeed, nextSceneKey) {
@@ -20,18 +15,12 @@ export class BaseLevel extends Phaser.Scene {
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
-    this.load.image("bg", "assets/bg.jpg");
+    this.load.image("bg", "assets/bg");
     this.load.image("platform", "assets/platform.png");
+    this.load.image("invisibleSprite", "assets/invisibleSprite.png",{frameWidth: 32});
     this.load.spritesheet("player", "assets/player.png", {
       frameWidth: 62,
       frameHeight: 64,
-      startFrame: 5,
-    });
-    this.load.spritesheet("invisibleSprite", "assets/invisibleSprite.png", {
-      frameWidth: 32,
-      frameHeight: 32,
-      startFrame: 0,
-      endFrame: 0,
     });
 
     this.registry.set("loaded", false);
@@ -109,6 +98,25 @@ export class BaseLevel extends Phaser.Scene {
     this.player = this.add
       .sprite(this.width / 2, this.height - 100, "player")
       .setOrigin(0, 0);
+    // Player walking left animation set here, repeat -1 is infinite loops
+    this.anims.create({
+      key: 'walk-left',
+      frames: this.anims.generateFrameNames('player', { frames: [4, 5, 6, 7] }),
+      frameRate: 4,
+      repeat: -1
+    });
+    // Player walking right animation set here
+    this.anims.create({
+      key: 'walk-right',
+      frames: this.anims.generateFrameNumbers('player', { frames: [8, 9, 10, 11] }),
+      frameRate: 12,
+      repeat: -1
+    });
+    // Load player sprite run walk left animation
+    this.player.play('walk-left');
+    this.time.delayedCall(8000, () => {
+      this.player.play('walk-right');
+    });
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 

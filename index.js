@@ -18,6 +18,6 @@ modeToggleButton.addEventListener('click', () => {
   isLightMode = !isLightMode;
 
   // Update the SVG icon source and button label based on the mode
-  modeIcon.src = isLightMode ? '/assets/light_mode.svg' : '/assets/dark_mode.svg';
-  modeLabel.textContent = isLightMode ? 'Light Mode' : 'Dark Mode';
+  modeIcon.src = isLightMode ? '/assets/toggle_off.png' : '/assets/toggle_on.png';
+  modeLabel.textContent = isLightMode ? 'Dark mode off' : 'Dark mode on';
 });
