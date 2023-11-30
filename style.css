@@ -1,47 +1,139 @@
+/* Font importing and selecting the fonts to be used */
+@font-face {
+  font-family: 'Nova Square', sans-serif;
+  /* relative path should load first, if that fails then the api link will load */
+  src: url('/assets/NovaSquare-Regular.ttf');
+}
+/* Pseudo parent element setting font + custom variable definitions */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Nova Square', sans-serif;
   --darkColour: #1a1a1a;
   --lightColour: #f2f2f2;
-  --primaryColour: #ff5a5f;
 }
 
-*{
+/* Removes default margin, padding and box-sizing for all elements */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,body{
+/* Applies light mode or dark mode for the page */
+.light-mode {
+  background-color: var(--lightColour);
+  color: var(--darkColour);
+}
+
+/* Reverse of light mode */
+.dark-mode {
+  background-color: var(--darkColour);
+  color: var(--lightColour);
+}
+
+/* Size of document */
+html,
+body {
   height: 100%;
   width: 100%;
 }
 
-body{
-  background-color: var(--darkColour);
-  color: var(--lightColour);
+/* Body will */
+body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-header,footer{
+/* Flexbox styling for all header/footer elements */
+header,
+footer,
+.credits {
   display: flex;
+  flex-flow: column wrap;
   justify-content: center;
   align-items: center;
-  padding: 40px 20px;
+  margin: 1rem 1rem;
 }
 
-main{
+/* Applies position to header so the button can be placed in the corner */
+header {
+  position: relative;
+}
+
+/* Place button to the right corner of page and various other styling */
+#lightDarkMode {
+  padding: 0.5rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 100%;
+  box-shadow: 5px 5px;
+}
+
+/* Set different shadow colour based on class applied to it */
+#lightDarkMode.light-mode {
+  box-shadow: darkslategray;
+}
+
+#lightDarkMode.dark-mode {
+  box-shadow: lightslategray;
+}
+
+/* Center the button text */
+#lightDarkMode span {
+  display: flex;
+  align-self: center;
+}
+
+/* Fills all available space vertically within body */
+main {
   flex: 1;
   display: flex;
 }
 
-#gameCanvas{
-  border: 1px solid green;
+/* Placing the button to the far right of the screen */
+#lightDarkMode {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+/* Phaser window styles */
+#gameCanvas {
+  border: 3px solid;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   z-index: 1;
+}
+
+/* Changes border colour for light mode */
+#gameCanvas.light-mode {
+  border-color: darkgreen;
+}
+
+/* Changes border colour for dark mode */
+#gameCanvas.dark-mode {
+  border-color: lightgreen;
+}
+
+/* Removes underline for links */
+.credits a {
+  text-decoration: none;
+}
+
+/* Links are more visible in dark mode */
+.dark-mode a:link {
+  color: lightblue;
+}
+
+.dark-mode a:visited {
+  color: mediumpurple;
+}
+
+/* Removes bullet point for list elements */
+.credits li {
+  list-style-type: none;
+  text-align: center;
 }
