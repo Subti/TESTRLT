@@ -14,6 +14,7 @@ export class BaseLevel extends Phaser.Scene {
     this.player;
     this.activeWords = [];
     this.calledWords = [];
+    this.wordDelay = { min: 500, max: 1500 };
     this.width = 1200;
     this.height = 600;
   }
@@ -48,7 +49,7 @@ export class BaseLevel extends Phaser.Scene {
 
         //Load a word at random intervals of 1-3 seconds
         this.time.addEvent({
-          delay: Phaser.Math.Between(1000, 3000),
+          delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
           callback: this.loadWord,
           callbackScope: this,
           loop: false,
@@ -129,7 +130,9 @@ export class BaseLevel extends Phaser.Scene {
     const sprite = this.words
       .create(Phaser.Math.Between(0, 1025), 10, "invisibleSprite")
       .setScale(0.5)
-      .setVelocityY(this.fallSpeed);
+      .setVelocityY(
+        Phaser.Math.FloatBetween(this.fallSpeed, 1.5 * this.fallSpeed)
+      );
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
