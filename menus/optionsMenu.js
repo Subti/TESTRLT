@@ -52,6 +52,9 @@ export class OptionsScene extends Phaser.Scene {
       .on("pointerdown", () => this.scene.start("scene-menu"));
     this.tweens.add({
       targets: backButton,
+      scaleX: 2, // Grow on x axis
+      scaleY: 2, // Grow on y axis
+      ease: 'Linear', // Ease linear direction
       alpha: 0.25, // Fades out in 250 ms
       yoyo: true, // Reverses animation
       repeat: -1, // Repeat infinitely
