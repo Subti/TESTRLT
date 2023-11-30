@@ -9,7 +9,7 @@ export class BaseLevel extends Phaser.Scene {
     this.player;
     this.activeWords = [];
     this.calledWords = [];
-    this.wordDelay = { min: 500, max: 1500 };
+    this.wordDelay = { min: 500, max: 1000 };
     this.width = 1200;
     this.height = 600;
   }
