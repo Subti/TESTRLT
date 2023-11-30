@@ -22,10 +22,17 @@ class MenuScene extends Phaser.Scene {
     this.registry.set("isColliding", false);
     this.registry.set("lives", 3);
 
+    // Create rounded rectangle
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0x000000, 1);
+    graphics.fillRoundedRect(550, 275, 200, 50, 16);
+
+    // Create start button
     const startButton = this.add
-      .text(600, 300, "Start Game", { fill: "#0f0" })
+      .text(600, 300, "Start Game", { fontSize: "32px", fill: "#0f0" })
+      .setOrigin(0.5, 0.5) // Center align text
       .setInteractive()
-      .on("pointerdown", () => this.scene.start("scene-game")); // Start GameScene when the start button is clicked
+      .on("pointerdown", () => this.scene.start("TestLevel")); // Start GameScene when the start button is clicked
   }
 }
 
@@ -241,7 +248,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [MenuScene, GameScene, Level1, WinScene, LossScene],
+  scene: [MenuScene, GameScene, Level1, TestLevel, WinScene, LossScene],
 };
 
 const game = new Phaser.Game(config);
