@@ -183,7 +183,7 @@ export class MenuScene extends Phaser.Scene {
     // Stop the animation when the pointer is not over the options button
     options.on("pointerout", () => {
       optionsButtonTween.restart();
-      optionsButtonTween.stop();
+      optionsButtonTween.pause();
       options.setScale(1, 1);
       options.setAlpha(1);
     });
