@@ -85,6 +85,7 @@ export class BaseLevel extends Phaser.Scene {
       `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`,
       {
         fontSize: "32px",
+        fontFamily: "Pixelify Sans",
         fill: "#fff",
       }
     );
@@ -107,6 +108,7 @@ export class BaseLevel extends Phaser.Scene {
       this.currentWord,
       {
         fontSize: "32px",
+        fontFamily: "Pixelify Sans",
         fill: "#fff",
       }
     );
@@ -199,6 +201,7 @@ export class BaseLevel extends Phaser.Scene {
 
     const text = this.add.text(10, 10, word, {
       fontSize: "32px",
+      fontFamily: "Pixelify Sans", // Delete if words are hard to read and font-family defaults to sans-serif
       fill: "#fff",
     });
 
