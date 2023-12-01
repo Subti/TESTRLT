@@ -205,6 +205,38 @@ export class BaseLevel extends Phaser.Scene {
     this.activeWords.push({ sprite, text, word });
   }
 
+  handleCorrectWord(i) {
+    this.registry.set(
+      "points",
+      this.registry.get("points") + 10 * this.activeWords[i].word.length
+    );
+    this.textScore.setText(
+      `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
+    );
+
+    const emitStars = this.add.particles(0, 0, "star", {
+      x: this.activeWords[i].sprite.x,
+      y: this.activeWords[i].sprite.y,
+      speed: 100,
+      gravityY: 200,
+      scale: 0.04,
+      duration: 600,
+      emitting: false,
+    });
+
+    emitStars.start();
+
+    this.dingMusic.play();
+    // Remove the word from the screen and the array
+    this.activeWords[i].sprite.destroy();
+    this.activeWords[i].text.destroy();
+    this.activeWords.splice(i, 1);
+
+    // Clear the current word
+    this.currentWord = "";
+    this.currentWordText.setText(this.currentWord);
+  }
+
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
   update() {
     if (!this.registry.get("loaded")) {
@@ -219,35 +251,7 @@ export class BaseLevel extends Phaser.Scene {
     // Check if the current word matches any active word
     for (let i = 0; i < this.activeWords.length; i++) {
       if (this.currentWord === this.activeWords[i].word) {
-        this.registry.set(
-          "points",
-          this.registry.get("points") + 10 * this.currentWord.length
-        );
-        this.textScore.setText(
-          `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
-        );
-
-        const emitStars = this.add.particles(0, 0, "star", {
-          x: this.activeWords[i].sprite.x,
-          y: this.activeWords[i].sprite.y,
-          speed: 100,
-          gravityY: 200,
-          scale: 0.04,
-          duration: 600,
-          emitting: false,
-        });
-
-        emitStars.start();
-
-        this.dingMusic.play();
-        // Remove the word from the screen and the array
-        this.activeWords[i].sprite.destroy();
-        this.activeWords[i].text.destroy();
-        this.activeWords.splice(i, 1);
-
-        // Clear the current word
-        this.currentWord = "";
-        this.currentWordText.setText(this.currentWord);
+        this.handleCorrectWord(i);
       }
     }
     // Check for loss condition
