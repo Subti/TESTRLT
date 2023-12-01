@@ -1,3 +1,5 @@
+import { powerUps } from "../powers/basePowers.js";
+
 //define game canvas (what it does)
 export class BaseLevel extends Phaser.Scene {
   constructor(key, wordLength, wordQuantity, fallSpeed, nextSceneKey) {
@@ -14,6 +16,8 @@ export class BaseLevel extends Phaser.Scene {
     this.loseLife;
     this.activeWords = [];
     this.calledWords = [];
+    this.activePowerUps = [];
+    this.comboCounter = 0;
     this.wordDelay = { min: 500, max: 1000 };
     this.width = 1200;
     this.height = 600;
@@ -62,6 +66,9 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
+    console.log(powerUps);
+    this.activePowerUps.push(powerUps[0]);
+
     this.dingMusic = this.sound.add("ding");
     this.levelComplete = this.sound.add("levelComplete");
     this.loseLife = this.sound.add("loseLife");
@@ -213,6 +220,25 @@ export class BaseLevel extends Phaser.Scene {
     this.textScore.setText(
       `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
     );
+
+    // Increase the correct words counter
+    this.comboCounter++;
+
+    // Check if the WordPop power-up should be activated
+    if (this.comboCounter === 3) {
+      // Find the WordPop power-up
+      const wordPop = this.activePowerUps.find(
+        (powerUp) => powerUp.name === "WordPop"
+      );
+
+      // If the WordPop power-up is active, call its effect function
+      if (wordPop) {
+        wordPop.effect(this);
+      }
+
+      // Reset the correct words counter
+      this.comboCounter = 0;
+    }
 
     const emitStars = this.add.particles(0, 0, "star", {
       x: this.activeWords[i].sprite.x,
