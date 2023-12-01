@@ -8,11 +8,13 @@ export class LossScene extends Phaser.Scene {
     this.add.text(600, 200, 'Game Over', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
     // Add "Restart" button
-    const restartButton = this.add.text(600, 300, 'Restart', { fontSize: '32px', fill: '#fff' })
+    const restartButton = this.add.text(600, 300, 'Restart Game', { fontSize: '32px', fill: '#fff' })
       .setInteractive()
       .setOrigin(0.5)
       .on('pointerdown', () => {
-        // Restart the game (replace 'Level1' with the appropriate level)
+        // Re-initialize lives and points then send player back to level 1
+        this.registry.set("lives", 3);
+        this.registry.set("points", 0);
         this.scene.start('Level1');
       });
     // Stretch animation for restartButton
