@@ -111,8 +111,6 @@ export class BaseLevel extends Phaser.Scene {
       }
     );
 
-    console.log(this.livesContainer.list);
-
     //this is the event listener for when the player types something and handles what will happen when they type something
     this.input.keyboard.on("keydown", (event) => {
       if (event.key === "Backspace") {
@@ -217,8 +215,6 @@ export class BaseLevel extends Phaser.Scene {
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
   update() {
-    console.log(this.registry.get("lives"));
-
     if (!this.registry.get("loaded")) {
       return;
     }
