@@ -1,12 +1,7 @@
-/* Font importing and selecting the fonts to be used */
-@font-face {
-  font-family: 'Nova Square', sans-serif;
-  /* relative path should load first, if that fails then the api link will load */
-  src: url('/assets/NovaSquare-Regular.ttf');
-}
 /* Pseudo parent element setting font + custom variable definitions */
 :root {
-  font-family: 'Nova Square', sans-serif;
+  /* Font linked in index.html */
+  font-family: sans-serif, 'Pixelify Sans';
   --darkColour: #1a1a1a;
   --lightColour: #f2f2f2;
 }

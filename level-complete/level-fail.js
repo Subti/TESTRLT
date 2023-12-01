@@ -5,10 +5,10 @@ export class LossScene extends Phaser.Scene {
 
   create() {
     // Add "Game Over" text
-    this.add.text(600, 200, 'Game Over', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
+    this.add.text(600, 200, 'Game Over', { fontSize: '64px', fontFamily: "Pixelify Sans", fill: '#fff' }).setOrigin(0.5);
 
     // Add "Restart" button
-    const restartButton = this.add.text(600, 300, 'Restart', { fontSize: '32px', fill: '#fff' })
+    const restartButton = this.add.text(600, 300, 'Restart', { fontSize: '32px', fontFamily: "Pixelify Sans", fill: '#fff' })
       .setInteractive()
       .setOrigin(0.5)
       .on('pointerdown', () => {
@@ -28,7 +28,7 @@ export class LossScene extends Phaser.Scene {
     // Adding a shadow for a "blur-like" effect
     restartButton.setShadow(2, 2, 'rgba(0,0,0,0.5)', 2, true, true);
     // Add "Main Menu" button
-    const menuButton = this.add.text(600, 400, 'Main Menu', { fontSize: '32px', fill: '#fff' })
+    const menuButton = this.add.text(600, 400, 'Main Menu', { fontSize: '32px', fontFamily: "Pixelify Sans", fill: '#fff' })
       .setInteractive()
       .setOrigin(0.5)
       .on('pointerdown', () => {
