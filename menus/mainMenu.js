@@ -163,6 +163,31 @@ export class MenuScene extends Phaser.Scene {
       .setAlpha(0) // Invisible setting
       .on("pointerdown", () => this.scene.start("scene-options"));
 
+    const optionsButtonTween = this.tweens.add({
+      targets: options,
+      scaleX: 1.3, // Grow on x axis
+      scaleY: 1.3, // Grow on y axis
+      ease: "Sine.easeInOut", // Use a sine wave for a smoother effect
+      duration: 500, // Run animation for 1000 ms
+      alpha: 0.5, // Fade in
+      yoyo: true, // Reverses animation
+      repeat: -1, // Repeat infinitely
+      paused: true, // Start the animation paused
+    });
+
+    // Start the animation when the pointer is over the options button
+    options.on("pointerover", () => {
+      optionsButtonTween.resume();
+    });
+
+    // Stop the animation when the pointer is not over the options button
+    options.on("pointerout", () => {
+      optionsButtonTween.restart();
+      optionsButtonTween.stop();
+      options.setScale(1, 1);
+      options.setAlpha(1);
+    });
+
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
       this.tweens.add({
