@@ -4,7 +4,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('bg', 'assets/bg.jpg');
+    this.load.image("bg", "assets/bg.jpg");
   }
 
   create() {
@@ -14,7 +14,7 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("lives", 3);
 
     // Load background
-    this.add.image(600,300,'bg');
+    this.add.image(600, 300, "bg");
 
     const gameTitle = "Project RLT";
     let startX = 400; // X position needs to be mutable, the value gets redefined in the forEach method below
@@ -23,13 +23,15 @@ export class MenuScene extends Phaser.Scene {
     const fallingLetters = this.add.group();
 
     // Loop through each letter
-    gameTitle.split('').forEach((letter, index) => {
+    gameTitle.split("").forEach((letter, index) => {
       // Create a text object for each letter
-      const letterText = this.add.text(startX, -50, letter, {
-        fontSize: '96px',
-        fontFamily: 'Nova Square', // Referencing font family from style.css import
-        color: '#fff'
-      }).setOrigin(0.5);
+      const letterText = this.add
+        .text(startX, -50, letter, {
+          fontSize: "96px",
+          fontFamily: "Nova Square", // Referencing font family from style.css import
+          color: "#fff",
+        })
+        .setOrigin(0.5);
 
       // Add letter to the group
       fallingLetters.add(letterText);
@@ -41,12 +43,43 @@ export class MenuScene extends Phaser.Scene {
       this.tweens.add({
         targets: letterText,
         y: 300,
-        ease: 'Bounce.easeOut',
+        ease: "Bounce.easeOut",
         duration: 1000,
-        delay: index * 100 // Stagger the start of each letter's animation
+        delay: index * 100, // Stagger the start of each letter's animation
       });
       // Define colour array to cycle through
-      const colors = ['#FF0000', '#800000', '#FFC0CB', '#DC143C', '#B22222', '#FFA500', '#FFD700', '#FFFF00', '#FF4500', '#DAA520', '#008000', '#00FF00', '#228B22', '#32CD32', '#90EE90', '#0000FF', '#000080', '#87CEEB', '#1E90FF', '#4169E1', '#800080', '#EE82EE', '#8A2BE2', '#9400D3', '#9932CC', '#FF69B4', '#C71585', '#FF00FF', '#DB7093', '#FF1493'];
+      const colors = [
+        "#FF0000",
+        "#800000",
+        "#FFC0CB",
+        "#DC143C",
+        "#B22222",
+        "#FFA500",
+        "#FFD700",
+        "#FFFF00",
+        "#FF4500",
+        "#DAA520",
+        "#008000",
+        "#00FF00",
+        "#228B22",
+        "#32CD32",
+        "#90EE90",
+        "#0000FF",
+        "#000080",
+        "#87CEEB",
+        "#1E90FF",
+        "#4169E1",
+        "#800080",
+        "#EE82EE",
+        "#8A2BE2",
+        "#9400D3",
+        "#9932CC",
+        "#FF69B4",
+        "#C71585",
+        "#FF00FF",
+        "#DB7093",
+        "#FF1493",
+      ];
       let currentColor = 0;
       this.time.addEvent({
         delay: 1000,
@@ -54,7 +87,7 @@ export class MenuScene extends Phaser.Scene {
           letterText.setFill(colors[currentColor]);
           currentColor = (currentColor + 1) % colors.length;
         },
-        loop: true
+        loop: true,
       });
     });
 
@@ -64,43 +97,96 @@ export class MenuScene extends Phaser.Scene {
         targets: fallingLetters.getChildren(),
         scaleX: 0.5,
         scaleY: 0.5,
-        x: '+=0',
+        x: "+=0",
         y: 100,
         duration: 1000,
-        ease: 'Power1'
+        ease: "Power1",
       });
     });
 
     // Create start button and set initial alpha to 0 for it to fade in later
-    const startButton = this.add.text(600, 300, "Start Game", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
+    const startButton = this.add
+      .text(600, 300, "Start Game", {
+        fontSize: "32px",
+        fontFamily: "Nova Square",
+        fill: "#fff",
+      })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .setAlpha(0) // Invisible setting
       .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
     // Simple animation for startButton, starts after gameTitle animation
-    this.time.delayedCall(gameTitle.length * 100 + 1500, () => {
-      this.tweens.add({
-        targets: startButton,
-        scaleX: 2, // Grow on x axis
-        scaleY: 2, // Grow on y axis
-        ease: 'Linear', // Ease linear direction
-        alpha: 0.25, // Fades out in 250 ms
-        yoyo: true, // Reverses animation
-        repeat: -1, // Repeat infinitely
-        duration: 500, // Run animation for 500 ms
-      });
+    const startButtonTween = this.tweens.add({
+      targets: startButton,
+      scaleX: 1.3, // Grow on x axis
+      scaleY: 1.3, // Grow on y axis
+      ease: "Sine.easeInOut", // Use a sine wave for a smoother effect
+      duration: 500, // Run animation for 1000 ms
+      alpha: 0.5, // Fade in
+      yoyo: true, // Reverses animation
+      repeat: -1, // Repeat infinitely
+      paused: true, // Start the animation paused
     });
+
+    // Start the animation when the pointer is over the start button
+    startButton.on("pointerover", () => {
+      startButtonTween.resume();
+    });
+
+    // Stop the animation when the pointer is not over the start button
+    startButton.on("pointerout", () => {
+      startButtonTween.restart();
+      startButtonTween.pause();
+      startButton.setScale(1, 1);
+      startButton.setAlpha(1);
+    });
+
     // Menu title text with basic style and set initial alpha to 0 fades in at same time as startButton
-    const menuHeader = this.add.text(600, 175, "Main menu", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
+    const menuHeader = this.add
+      .text(600, 175, "Main menu", {
+        fontSize: "32px",
+        fontFamily: "Nova Square",
+        fill: "#fff",
+      })
       .setOrigin(0.5, 0.5)
       .setAlpha(0); // Invisible setting
 
     // Options button takes user to options menu
-    const options = this.add.text(600, 350, "Options", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
+    const options = this.add
+      .text(600, 350, "Options", {
+        fontSize: "32px",
+        fontFamily: "Nova Square",
+        fill: "#fff",
+      })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .setAlpha(0) // Invisible setting
       .on("pointerdown", () => this.scene.start("scene-options"));
+
+    const optionsButtonTween = this.tweens.add({
+      targets: options,
+      scaleX: 1.3, // Grow on x axis
+      scaleY: 1.3, // Grow on y axis
+      ease: "Sine.easeInOut", // Use a sine wave for a smoother effect
+      duration: 500, // Run animation for 1000 ms
+      alpha: 0.5, // Fade in
+      yoyo: true, // Reverses animation
+      repeat: -1, // Repeat infinitely
+      paused: true, // Start the animation paused
+    });
+
+    // Start the animation when the pointer is over the options button
+    options.on("pointerover", () => {
+      optionsButtonTween.resume();
+    });
+
+    // Stop the animation when the pointer is not over the options button
+    options.on("pointerout", () => {
+      optionsButtonTween.restart();
+      optionsButtonTween.pause();
+      options.setScale(1, 1);
+      options.setAlpha(1);
+    });
 
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
@@ -108,7 +194,7 @@ export class MenuScene extends Phaser.Scene {
         targets: [startButton, menuHeader, options],
         alpha: 1,
         duration: 1000,
-        ease: 'Power1'
+        ease: "Power1",
       });
     });
   }
