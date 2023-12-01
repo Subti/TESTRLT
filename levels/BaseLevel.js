@@ -26,11 +26,6 @@ export class BaseLevel extends Phaser.Scene {
       frameWidth: 62,
       frameHeight: 64,
     });
-    // Also from phaser example
-    // this.load.audioSprite('sfx', 'assets/audio/SoundEffects/fx_mixdown.json', [
-    //   'assets/audio/SoundEffects/fx_mixdown.ogg',
-    //   'assets/audio/SoundEffects/fx_mixdown.mp3'
-    // ]);
 
     this.registry.set("loaded", false);
 

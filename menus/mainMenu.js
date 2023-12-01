@@ -2,14 +2,9 @@ export class MenuScene extends Phaser.Scene {
   constructor() {
     super("scene-menu");
   }
+
   preload() {
-    // From phaser example
-    this.load.image('raster', 'assets/raster.png');
-    // Also from phaser example
-    // this.load.audioSprite('sfx', 'assets/audio/SoundEffects/fx_mixdown.json', [
-    //   'assets/audio/SoundEffects/fx_mixdown.ogg',
-    //   'assets/audio/SoundEffects/fx_mixdown.mp3'
-    // ]);
+    this.load.image('bg', 'assets/bg.jpg');
   }
 
   create() {
@@ -17,72 +12,104 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("speedDown", 150);
     this.registry.set("isColliding", false);
     this.registry.set("lives", 3);
-    // Test background from phaser example
-    const group = this.add.group();
 
-    group.createMultiple({ key: 'raster', repeat: 8 });
+    // Load background
+    this.add.image(600,300,'bg');
 
-    let ci = 0;
-    const bgColors = [0xef658c, 0xff9a52, 0xffdf00, 0x31ef8c, 0x21dfff, 0x31aade, 0x5275de, 0x9c55ad, 0xbd208c];
+    const gameTitle = "Project RLT";
+    let startX = 400; // X position needs to be mutable, the value gets redefined in the forEach method below
 
-    const _this = this;
+    // Container to hold all letters
+    const fallingLetters = this.add.group();
 
-    group.children.iterate(child => {
+    // Loop through each letter
+    gameTitle.split('').forEach((letter, index) => {
+      // Create a text object for each letter
+      const letterText = this.add.text(startX, -50, letter, {
+        fontSize: '96px',
+        fontFamily: 'Nova Square', // Referencing font family from style.css import
+        color: '#fff'
+      }).setOrigin(0.5);
 
-      child.x = -100;
-      child.y = 300;
-      child.depth = 9 - ci;
+      // Add letter to the group
+      fallingLetters.add(letterText);
 
-      child.tint = bgColors[ci];
+      // Adjust startX for the next letter
+      startX += letterText.width;
 
-      ci++;
-
-      _this.tweens.add({
-        targets: child,
-        x: 1300,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-        duration: 1500,
-        delay: 100 * ci
+      // Animate each letter falling into place
+      this.tweens.add({
+        targets: letterText,
+        y: 300,
+        ease: 'Bounce.easeOut',
+        duration: 1000,
+        delay: index * 100 // Stagger the start of each letter's animation
       });
-
+      // Define colour array to cycle through
+      const colors = ['#FF0000', '#800000', '#FFC0CB', '#DC143C', '#B22222', '#FFA500', '#FFD700', '#FFFF00', '#FF4500', '#DAA520', '#008000', '#00FF00', '#228B22', '#32CD32', '#90EE90', '#0000FF', '#000080', '#87CEEB', '#1E90FF', '#4169E1', '#800080', '#EE82EE', '#8A2BE2', '#9400D3', '#9932CC', '#FF69B4', '#C71585', '#FF00FF', '#DB7093', '#FF1493'];
+      let currentColor = 0;
+      this.time.addEvent({
+        delay: 1000,
+        callback: () => {
+          letterText.setFill(colors[currentColor]);
+          currentColor = (currentColor + 1) % colors.length;
+        },
+        loop: true
+      });
     });
-// Create start button
-const startButton = this.add
-  .text(600, 300, "Start Game", { fontSize: "32px", fill: "" })
-  .setOrigin(0.5, 0.5) // Center align text
-  .setInteractive()
-  .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
 
-// An array of colors to cycle through
-const textColors = ['red', 'green', 'blue']; // Red, Green, Blue
-let colorIndex = 0; // Initialize the color index
+    // After all letters have fallen into place, resize and reposition
+    this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
+      this.tweens.add({
+        targets: fallingLetters.getChildren(),
+        scaleX: 0.5,
+        scaleY: 0.5,
+        x: '+=0',
+        y: 100,
+        duration: 1000,
+        ease: 'Power1'
+      });
+    });
 
-// Function to change text color and cycle through the array
-function changeTextColor() {
-  startButton.setFill(textColors[colorIndex]); // Set the text color of startButton
-  colorIndex = (colorIndex + 1) % textColors.length; // Increment the color index and wrap around
-}
-
-// Create a tween to change the text color every 1000 milliseconds (1 second)
-this.tweens.add({
-  targets: startButton,
-  onStart: changeTextColor, // Call the changeTextColor function when the tween starts
-  onComplete: changeTextColor, // Call the changeTextColor function when the tween completes
-  loop: -1, // Repeat infinitely
-  duration: 1000, // 1000 milliseconds (1 second) per color change
-});
-
-    // Menu title text with basic style
-    const title = this.add
-      .text(600, 100, "Main menu", { fontSize: "32px", fill: "#0f0" })
-      .setOrigin(0.5, 0.5);
-    // Options button takes user to options menu
-    const options = this.add
-      .text(600, 350, "Options", { fontSize: "32px", fill: "#0f0" })
+    // Create start button and set initial alpha to 0 for it to fade in later
+    const startButton = this.add.text(600, 300, "Start Game", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
       .setOrigin(0.5, 0.5)
       .setInteractive()
-      .on("pointerdown", () => this.scene.start("scene-options")); // Switch to options
+      .setAlpha(0) // Invisible setting
+      .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
+    // Simple animation for startButton, starts after gameTitle animation
+    this.time.delayedCall(gameTitle.length * 100 + 1500, () => {
+      this.tweens.add({
+        targets: startButton,
+        scaleX: 2, // Grow on x axis
+        scaleY: 2, // Grow on y axis
+        ease: 'Linear', // Ease linear direction
+        alpha: 0.25, // Fades out in 250 ms
+        yoyo: true, // Reverses animation
+        repeat: -1, // Repeat infinitely
+        duration: 500, // Run animation for 500 ms
+      });
+    });
+    // Menu title text with basic style and set initial alpha to 0 fades in at same time as startButton
+    const menuHeader = this.add.text(600, 175, "Main menu", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
+      .setOrigin(0.5, 0.5)
+      .setAlpha(0); // Invisible setting
+
+    // Options button takes user to options menu
+    const options = this.add.text(600, 350, "Options", { fontSize: "32px", fontFamily: "Nova Square", fill: "#fff" })
+      .setOrigin(0.5, 0.5)
+      .setInteractive()
+      .setAlpha(0) // Invisible setting
+      .on("pointerdown", () => this.scene.start("scene-options"));
+
+    // Fade in menu buttons after falling letters animation
+    this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
+      this.tweens.add({
+        targets: [startButton, menuHeader, options],
+        alpha: 1,
+        duration: 1000,
+        ease: 'Power1'
+      });
+    });
   }
-};
+}

@@ -5,11 +5,6 @@ export class OptionsScene extends Phaser.Scene {
 
   preload() {
     this.load.image('raster', 'assets/raster.png');
-    // Also from phaser example
-    // this.load.audioSprite('sfx', 'assets/audio/SoundEffects/fx_mixdown.json', [
-    //   'assets/audio/SoundEffects/fx_mixdown.ogg',
-    //   'assets/audio/SoundEffects/fx_mixdown.mp3'
-    // ]);
   }
 
   create() {
