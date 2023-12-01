@@ -8,6 +8,7 @@ export class BaseLevel extends Phaser.Scene {
     this.fallSpeed = fallSpeed;
     this.nextSceneKey = nextSceneKey;
     this.player;
+    this.emitter;
     this.activeWords = [];
     this.calledWords = [];
     this.wordDelay = { min: 500, max: 1000 };
@@ -20,6 +21,7 @@ export class BaseLevel extends Phaser.Scene {
     this.load.image("bg", "assets/bg.jpg");
     this.load.image("platform", "assets/platform.png");
     this.load.image("hearts", "assets/heart.png");
+    this.load.image("confetti", "assets/confettiParticles.png");
     this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
@@ -164,6 +166,14 @@ export class BaseLevel extends Phaser.Scene {
       this.player.play("walk-right");
     });
 
+    this.emitter = this.add.particles(0, 0, "confetti", {
+      speed: 100,
+      gravityY: 200,
+      scale: 0.04,
+      duration: 300,
+      emitting: false,
+    });
+
     this.cursorKeys = this.input.keyboard.createCursorKeys();
   }
   // Function to load words from API call
@@ -211,6 +221,11 @@ export class BaseLevel extends Phaser.Scene {
         this.textScore.setText(
           `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
         );
+        this.emitter.setPosition(
+          this.activeWords[i].sprite.x,
+          this.activeWords[i].sprite.y
+        );
+        this.emitter.start();
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
