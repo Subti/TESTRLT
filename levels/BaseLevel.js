@@ -10,6 +10,8 @@ export class BaseLevel extends Phaser.Scene {
     this.player;
     this.emitter;
     this.dingMusic;
+    this.levelComplete;
+    this.loseLife;
     this.activeWords = [];
     this.calledWords = [];
     this.wordDelay = { min: 500, max: 1000 };
@@ -24,6 +26,8 @@ export class BaseLevel extends Phaser.Scene {
     this.load.image("hearts", "assets/heart.png");
     this.load.image("confetti", "assets/confettiParticles.png");
     this.load.audio("ding", "assets/typewriterDing.wav");
+    this.load.audio("levelComplete", "assets/levelComplete.wav");
+    this.load.audio("loseLife", "assets/loseLife.wav");
     this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
@@ -59,6 +63,8 @@ export class BaseLevel extends Phaser.Scene {
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
     this.dingMusic = this.sound.add("ding");
+    this.levelComplete = this.sound.add("levelComplete");
+    this.loseLife = this.sound.add("loseLife");
     //this initializes what the player is currently typing
     this.currentWord = "";
 
@@ -105,6 +111,8 @@ export class BaseLevel extends Phaser.Scene {
       }
     );
 
+    console.log(this.livesContainer.list);
+
     //this is the event listener for when the player types something and handles what will happen when they type something
     this.input.keyboard.on("keydown", (event) => {
       if (event.key === "Backspace") {
@@ -130,8 +138,14 @@ export class BaseLevel extends Phaser.Scene {
       // Reduce the number of lives
       this.registry.set("lives", this.registry.get("lives") - 1);
 
+      this.loseLife.play();
+
       // Destroy the word sprite
       word.destroy();
+
+      // Remove the last heart from the container
+      const lastHeart = this.livesContainer.list.pop();
+      lastHeart.destroy();
 
       // Find and destroy the corresponding word text
       const wordIndex = this.activeWords.findIndex(
@@ -260,6 +274,8 @@ export class BaseLevel extends Phaser.Scene {
             Math.floor((60 - this.timedEvent.getElapsedSeconds()) / 10)
         )
       );
+
+      this.levelComplete.play();
 
       // Transition to win scene
       this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
