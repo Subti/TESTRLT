@@ -68,6 +68,7 @@ export class BaseLevel extends Phaser.Scene {
   create() {
     console.log(powerUps);
     this.activePowerUps.push(powerUps[0]);
+    this.activePowerUps.push(powerUps[1]);
 
     this.dingMusic = this.sound.add("ding");
     this.levelComplete = this.sound.add("levelComplete");
@@ -194,14 +195,20 @@ export class BaseLevel extends Phaser.Scene {
   loadWord() {
     const word = this.calledWords.pop();
 
+    // const velocity = Phaser.Math.FloatBetween(
+    //   this.fallSpeed,
+    //   1.5 * this.fallSpeed
+    // );
+
+    const velocityY = Phaser.Math.FloatBetween(
+      this.fallSpeed,
+      1.5 * this.fallSpeed
+    );
+
     const sprite = this.words
-      // Make the max number dynamic if the player decides to expand the game canvas
       .create(Phaser.Math.Between(0, this.width - 250), 10, "invisibleSprite")
-      // set display size instead of set scale, scale made the text collision boxes much larger than the words themselves
       .setDisplaySize(this.width, 24)
-      .setVelocityY(
-        Phaser.Math.FloatBetween(this.fallSpeed, 1.5 * this.fallSpeed)
-      );
+      .setVelocityY(velocityY);
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
@@ -209,7 +216,19 @@ export class BaseLevel extends Phaser.Scene {
       fill: "#fff",
     });
 
-    this.activeWords.push({ sprite, text, word });
+    this.activeWords.push({ sprite, text, word, velocity: velocityY });
+  }
+
+  pauseWords() {
+    // Pause the words
+    this.activeWords.forEach((word) => word.sprite.body.setVelocity(0, 0));
+  }
+
+  resumeWords() {
+    // Resume the words
+    this.activeWords.forEach((word) =>
+      word.sprite.body.setVelocity(0, word.velocity)
+    );
   }
 
   handleCorrectWord(i) {
@@ -220,25 +239,6 @@ export class BaseLevel extends Phaser.Scene {
     this.textScore.setText(
       `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
     );
-
-    // Increase the correct words counter
-    this.comboCounter++;
-
-    // Check if the WordPop power-up should be activated
-    if (this.comboCounter === 3) {
-      // Find the WordPop power-up
-      const wordPop = this.activePowerUps.find(
-        (powerUp) => powerUp.name === "WordPop"
-      );
-
-      // If the WordPop power-up is active, call its effect function
-      if (wordPop) {
-        wordPop.effect(this);
-      }
-
-      // Reset the correct words counter
-      this.comboCounter = 0;
-    }
 
     const emitStars = this.add.particles(0, 0, "star", {
       x: this.activeWords[i].sprite.x,
@@ -261,6 +261,34 @@ export class BaseLevel extends Phaser.Scene {
     // Clear the current word
     this.currentWord = "";
     this.currentWordText.setText(this.currentWord);
+    // Increase the correct words counter
+    this.comboCounter++;
+
+    // Check if the WordPop power-up should be activated
+    if (this.comboCounter % 3 === 0) {
+      // Find the WordPop power-up
+      const wordPop = this.activePowerUps.find(
+        (powerUp) => powerUp.name === "WordPop"
+      );
+
+      // If the WordPop power-up is active, call its effect function
+      if (wordPop) {
+        wordPop.effect(this);
+      }
+    }
+
+    // Check if the WordFreeze power-up should be activated
+    if (this.comboCounter % 5 === 0) {
+      // Find the WordFreeze power-up
+      const wordFreeze = this.activePowerUps.find(
+        (powerUp) => powerUp.name === "WordFreeze"
+      );
+
+      // If the WordFreeze power-up is active, call its effect function
+      if (wordFreeze) {
+        wordFreeze.effect(this);
+      }
+    }
   }
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
