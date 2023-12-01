@@ -3,7 +3,13 @@ export class LossScene extends Phaser.Scene {
     super({ key: 'LossScene' });
   }
 
+  preload() {
+    this.load.image("bg", "assets/bg.jpg");
+  }
+
   create() {
+    // Load background
+    this.add.image(600, 300, "bg");
     // Add "Game Over" text
     this.add.text(600, 200, 'Game Over', { fontSize: '64px', fill: '#fff' }).setOrigin(0.5);
 
