@@ -9,6 +9,7 @@ export class BaseLevel extends Phaser.Scene {
     this.nextSceneKey = nextSceneKey;
     this.player;
     this.emitter;
+    this.dingMusic;
     this.activeWords = [];
     this.calledWords = [];
     this.wordDelay = { min: 500, max: 1000 };
@@ -22,6 +23,7 @@ export class BaseLevel extends Phaser.Scene {
     this.load.image("platform", "assets/platform.png");
     this.load.image("hearts", "assets/heart.png");
     this.load.image("confetti", "assets/confettiParticles.png");
+    this.load.audio("ding", "assets/typewriterDing.wav");
     this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
@@ -56,6 +58,7 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
+    this.dingMusic = this.sound.add("ding");
     //this initializes what the player is currently typing
     this.currentWord = "";
 
@@ -225,6 +228,7 @@ export class BaseLevel extends Phaser.Scene {
           this.activeWords[i].sprite.x,
           this.activeWords[i].sprite.y
         );
+        this.dingMusic.play();
         this.emitter.start();
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
