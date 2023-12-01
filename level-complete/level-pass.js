@@ -3,12 +3,18 @@ export class WinScene extends Phaser.Scene {
     super("WinScene");
   }
 
+  preload() {
+    this.load.image("bg", "assets/bg.jpg");
+  }
+
   init(data) {
     // Store the next level's key
     this.nextSceneKey = data.nextSceneKey;
   }
 
   create() {
+    // Load background
+    this.add.image(600, 300, "bg");
     // Add continue button
     if (this.nextSceneKey) {
       const continueButton = this.add
@@ -16,15 +22,15 @@ export class WinScene extends Phaser.Scene {
         .setOrigin(0.5, 0.5)
         .setInteractive()
         .on("pointerdown", () => this.scene.start(this.nextSceneKey)); // Start the next level when the continue button is clicked
-        // Also render animation on continueButton
-        continueButton.rotation = -0.075;
-        this.tweens.add({
-          targets: continueButton,
-          rotation: 0.075,
-          ease: 'Sine.easeInOut',
-          duration: 750,
-          yoyo: true,
-          repeat: -1
+      // Also render animation on continueButton
+      continueButton.rotation = -0.075;
+      this.tweens.add({
+        targets: continueButton,
+        rotation: 0.075,
+        ease: 'Sine.easeInOut',
+        duration: 750,
+        yoyo: true,
+        repeat: -1
       });
     } else {
       const winText = this.add
