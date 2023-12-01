@@ -24,7 +24,7 @@ export class BaseLevel extends Phaser.Scene {
     this.load.image("bg", "assets/bg.jpg");
     this.load.image("platform", "assets/platform.png");
     this.load.image("hearts", "assets/heart.png");
-    this.load.image("confetti", "assets/confettiParticles.png");
+    this.load.image("star", "assets/starParticle.png");
     this.load.audio("ding", "assets/typewriterDing.wav");
     this.load.audio("levelComplete", "assets/levelComplete.wav");
     this.load.audio("loseLife", "assets/loseLife.wav");
@@ -181,14 +181,6 @@ export class BaseLevel extends Phaser.Scene {
       this.player.play("walk-right");
     });
 
-    this.emitter = this.add.particles(0, 0, "confetti", {
-      speed: 100,
-      gravityY: 200,
-      scale: 0.04,
-      duration: 300,
-      emitting: false,
-    });
-
     this.cursorKeys = this.input.keyboard.createCursorKeys();
   }
   // Function to load words from API call
@@ -234,12 +226,20 @@ export class BaseLevel extends Phaser.Scene {
         this.textScore.setText(
           `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
         );
-        this.emitter.setPosition(
-          this.activeWords[i].sprite.x,
-          this.activeWords[i].sprite.y
-        );
+
+        const emitStars = this.add.particles(0, 0, "star", {
+          x: this.activeWords[i].sprite.x,
+          y: this.activeWords[i].sprite.y,
+          speed: 100,
+          gravityY: 200,
+          scale: 0.04,
+          duration: 600,
+          emitting: false,
+        });
+
+        emitStars.start();
+
         this.dingMusic.play();
-        this.emitter.start();
         // Remove the word from the screen and the array
         this.activeWords[i].sprite.destroy();
         this.activeWords[i].text.destroy();
