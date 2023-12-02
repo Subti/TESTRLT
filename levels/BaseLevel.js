@@ -25,21 +25,20 @@ export class BaseLevel extends Phaser.Scene {
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
-    this.load.image("bg", "assets/bg.jpg");
-    this.load.image("platform", "assets/platform.png");
-    this.load.image("hearts", "assets/heart.png");
-    this.load.image("star", "assets/starParticle.png");
-    this.load.audio("ding", "assets/typewriterDing.wav");
-    this.load.audio("levelComplete", "assets/levelComplete.wav");
-    this.load.audio("loseLife", "assets/loseLife.wav");
-    this.load.audio("type", "assets/typeSound.wav");
-    this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
+    this.load.image("bg", "assets/images/bg.jpg");
+    this.load.image("platform", "assets/images/platform.png");
+    this.load.image("hearts", "assets/images/heart.png");
+    this.load.image("star", "assets/vfx/starParticle.png");
+    this.load.audio("ding", "assets/soundEffects/typewriterDing.wav");
+    this.load.audio("levelComplete", "assets/soundEffects/levelComplete.wav");
+    this.load.audio("loseLife", "assets/soundEffects/loseLife.wav");
+    this.load.image("invisibleSprite", "assets/images/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
     });
-    this.load.spritesheet("player", "assets/player.png", {
-      frameWidth: 62,
-      frameHeight: 64,
+    this.load.spritesheet("player", "assets/images/player.png", {
+      frameWidth: 50,
+      frameHeight: 37
     });
 
     this.registry.set("loaded", false);
@@ -154,6 +153,8 @@ export class BaseLevel extends Phaser.Scene {
       // Destroy the word sprite
       word.destroy();
 
+      // Run player hurt animation
+      this.player.anims.play("hurt");
       // Remove the last heart from the container
       const lastHeart = this.livesContainer.list.pop();
       lastHeart.destroy();
@@ -170,28 +171,24 @@ export class BaseLevel extends Phaser.Scene {
 
     this.player = this.add
       .sprite(this.width / 2, this.height - 100, "player")
+      .setScale(2)
       .setOrigin(0, 0);
-    // Player walking left animation set here, repeat -1 is infinite loops
+    // Player idle animation set here, repeat -1 is infinite loops
     this.anims.create({
-      key: "walk-left",
-      frames: this.anims.generateFrameNames("player", { frames: [4, 5, 6, 7] }),
-      frameRate: 4,
+      key: "idle",
+      frames: this.anims.generateFrameNames("player", { frames: [0, 1, 2, 3] }),
+      frameRate: 8,
       repeat: -1,
     });
-    // Player walking right animation set here
+    // Load player idling animation
+    this.player.play("idle");
+    // Player getting hit animation set here
     this.anims.create({
-      key: "walk-right",
+      key: "hurt",
       frames: this.anims.generateFrameNumbers("player", {
-        frames: [8, 9, 10, 11],
+        frames: [3, 65, 66, 67],
       }),
-      frameRate: 12,
-      repeat: -1,
-    });
-    // Load player sprite run walk left animation
-    this.player.play("walk-left");
-    // Load player walk right after 8 seconds
-    this.time.delayedCall(8000, () => {
-      this.player.play("walk-right");
+      frameRate: 8,
     });
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -218,7 +215,6 @@ export class BaseLevel extends Phaser.Scene {
 
     const text = this.add.text(10, 10, word, {
       fontSize: "32px",
-      // fontFamily: "", // Delete if words are hard to read and font-family defaults to sans-serif
       fill: "#fff",
     });
 

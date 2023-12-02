@@ -4,7 +4,7 @@ export class OptionsScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg", "assets/bg.jpg");
+    this.load.image("bg", "assets/images/bg.jpg");
   }
 
   create() {
