@@ -67,10 +67,8 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    console.log(powerUps);
-    this.activePowerUps.push(powerUps[0]);
-    this.activePowerUps.push(powerUps[1]);
-    this.activePowerUps.push(powerUps[2]);
+    // Get the active power-ups from the registry
+    this.activePowerUps = this.registry.get("activePowerUps");
 
     this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
@@ -87,19 +85,23 @@ export class BaseLevel extends Phaser.Scene {
     });
 
     //add background image
-    this.add.image(600, 300, "bg");//.setOrigin(0, 0);
+    this.add.image(600, 300, "bg"); //.setOrigin(0, 0);
 
     // Add level + score + lives info in the top center of game canvas
-    this.playerStats = this.add.text(
-      this.width / 2,
-      10,
-      `Level: ${this.levelNumber} | Score: ${this.registry.get("points")} | Lives: ${this.registry.get("lives")}`,
-      {
-        fontSize: "32px",
-        fontFamily: "Pixelify Sans",
-        fill: "#000000",
-      }
-    ).setOrigin(0.5, 0.1);
+    this.playerStats = this.add
+      .text(
+        this.width / 2,
+        10,
+        `Level: ${this.levelNumber} | Score: ${this.registry.get(
+          "points"
+        )} | Lives: ${this.registry.get("lives")}`,
+        {
+          fontSize: "32px",
+          fontFamily: "Pixelify Sans",
+          fill: "#000000",
+        }
+      )
+      .setOrigin(0.5, 0.1);
     // Add container for lives and place in the top left corner of page
     this.livesContainer = this.add.container(50, 25);
     // Grabs lives from registry and renders hearts based on remaining lives
@@ -145,24 +147,32 @@ export class BaseLevel extends Phaser.Scene {
     });
 
     this.platform = this.physics.add.staticGroup();
-    this.platform.create(600, 600, "platform").setScale(3).refreshBody().setAlpha(0); // Set alpha to 0 to hide image, remove or set to 1 if platform image is needed
+    this.platform
+      .create(600, 600, "platform")
+      .setScale(3)
+      .refreshBody()
+      .setAlpha(0); // Set alpha to 0 to hide image, remove or set to 1 if platform image is needed
     this.physics.add.overlap(this.words, this.platform, (word) => {
-        // Reduce the number of lives
-        this.registry.set("lives", this.registry.get("lives") - 1);
+      // Reduce the number of lives
+      this.registry.set("lives", this.registry.get("lives") - 1);
 
-        // Update text in game data
-        this.playerStats.setText(`Level: ${this.levelNumber} | Score: ${this.registry.get("points")} | Lives: ${this.registry.get("lives")}`);
+      // Update text in game data
+      this.playerStats.setText(
+        `Level: ${this.levelNumber} | Score: ${this.registry.get(
+          "points"
+        )} | Lives: ${this.registry.get("lives")}`
+      );
 
-        this.loseLife.play();
+      this.loseLife.play();
 
-        // Destroy the word sprite
-        word.destroy();
+      // Destroy the word sprite
+      word.destroy();
 
-        // Run player hurt animation
-        this.player.anims.play("hurt");
-        // Remove the last heart from the container
-        const lastHeart = this.livesContainer.list.pop();
-        lastHeart.destroy();
+      // Run player hurt animation
+      this.player.anims.play("hurt");
+      // Remove the last heart from the container
+      const lastHeart = this.livesContainer.list.pop();
+      lastHeart.destroy();
 
       // Find and destroy the corresponding word text
       const wordIndex = this.activeWords.findIndex(
@@ -201,11 +211,6 @@ export class BaseLevel extends Phaser.Scene {
   // Function to load words from API call
   loadWord() {
     const word = this.calledWords.pop();
-
-    // const velocity = Phaser.Math.FloatBetween(
-    //   this.fallSpeed,
-    //   1.5 * this.fallSpeed
-    // );
 
     let velocityY = Phaser.Math.FloatBetween(
       this.fallSpeed,
@@ -338,12 +343,20 @@ export class BaseLevel extends Phaser.Scene {
         this.registry.set("points", newScore);
 
         // Update the score text
-        this.playerStats.setText(`Level: ${this.levelNumber} | Score: ${newScore} | Lives: ${this.registry.get("lives")}`);
+        this.playerStats.setText(
+          `Level: ${
+            this.levelNumber
+          } | Score: ${newScore} | Lives: ${this.registry.get("lives")}`
+        );
 
         // If the score has reached the target, stop the timer event
         if (newScore >= this.targetScore) {
           this.registry.set("points", this.targetScore);
-          this.playerStats.setText(`Level: ${this.levelNumber} | Score: ${this.targetScore} | Lives: ${this.registry.get("lives")}`);
+          this.playerStats.setText(
+            `Level: ${this.levelNumber} | Score: ${
+              this.targetScore
+            } | Lives: ${this.registry.get("lives")}`
+          );
           this.scoreAnimation.remove(false);
           this.scoreAnimation = null;
         }
@@ -386,14 +399,18 @@ export class BaseLevel extends Phaser.Scene {
         "points",
         Math.floor(
           this.registry.get("points") *
-          Math.floor((60 - this.timedEvent.getElapsedSeconds()) / 10)
+            Math.floor((60 - this.timedEvent.getElapsedSeconds()) / 10)
         )
       );
 
       this.levelComplete.play();
 
-      // Transition to win scene
-      this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+      if (this.levelNumber % 1 === 0 && this.levelNumber < 7) {
+        this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
+      } else {
+        // Transition to win scene
+        this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+      }
     }
   }
 }
