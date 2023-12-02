@@ -11,8 +11,18 @@ export class PowerUp extends Phaser.Scene {
   }
 
   create() {
+    // Get the active power-ups from the registry
+    const activePowerUps = this.registry.get("activePowerUps") || [];
+
+    // Filter out the active power-ups
+    const availablePowerUps = powerUps.filter(
+      (powerUp) => !activePowerUps.includes(powerUp)
+    );
+
     // Select three random power-ups
-    const selectedPowerUps = Phaser.Utils.Array.Shuffle(powerUps).slice(0, 3);
+    const selectedPowerUps = Phaser.Utils.Array.Shuffle(
+      availablePowerUps
+    ).slice(0, 3);
 
     // Create a semi-transparent black rectangle as a background for when we include a background image
     const background = this.add
