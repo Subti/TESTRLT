@@ -67,10 +67,8 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    console.log(powerUps);
-    this.activePowerUps.push(powerUps[0]);
-    this.activePowerUps.push(powerUps[1]);
-    this.activePowerUps.push(powerUps[2]);
+    // Get the active power-ups from the registry
+    this.activePowerUps = this.registry.get("activePowerUps");
 
     this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
@@ -198,11 +196,6 @@ export class BaseLevel extends Phaser.Scene {
   // Function to load words from API call
   loadWord() {
     const word = this.calledWords.pop();
-
-    // const velocity = Phaser.Math.FloatBetween(
-    //   this.fallSpeed,
-    //   1.5 * this.fallSpeed
-    // );
 
     let velocityY = Phaser.Math.FloatBetween(
       this.fallSpeed,
@@ -390,8 +383,12 @@ export class BaseLevel extends Phaser.Scene {
 
       this.levelComplete.play();
 
-      // Transition to win scene
-      this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+      if (this.levelNumber % 3 === 0 && this.levelNumber < 7) {
+        this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
+      } else {
+        // Transition to win scene
+        this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+      }
     }
   }
 }
