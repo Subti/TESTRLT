@@ -32,13 +32,14 @@ export class BaseLevel extends Phaser.Scene {
     this.load.audio("ding", "assets/soundEffects/typewriterDing.wav");
     this.load.audio("levelComplete", "assets/soundEffects/levelComplete.wav");
     this.load.audio("loseLife", "assets/soundEffects/loseLife.wav");
+    this.load.audio("type", "assets/soundEffects/typeSound.wav");
     this.load.image("invisibleSprite", "assets/images/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
     });
     this.load.spritesheet("player", "assets/images/player.png", {
       frameWidth: 50,
-      frameHeight: 37
+      frameHeight: 37,
     });
 
     this.registry.set("loaded", false);
@@ -69,6 +70,7 @@ export class BaseLevel extends Phaser.Scene {
     console.log(powerUps);
     this.activePowerUps.push(powerUps[0]);
     this.activePowerUps.push(powerUps[1]);
+    this.activePowerUps.push(powerUps[2]);
 
     this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
@@ -202,10 +204,18 @@ export class BaseLevel extends Phaser.Scene {
     //   1.5 * this.fallSpeed
     // );
 
-    const velocityY = Phaser.Math.FloatBetween(
+    let velocityY = Phaser.Math.FloatBetween(
       this.fallSpeed,
       1.5 * this.fallSpeed
     );
+
+    const chunky = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "Chunky"
+    );
+
+    if (chunky) {
+      velocityY /= 2;
+    }
 
     const sprite = this.words
       .create(Phaser.Math.Between(0, this.width - 250), 10, "invisibleSprite")
@@ -214,7 +224,8 @@ export class BaseLevel extends Phaser.Scene {
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
-      fontSize: "32px",
+      fontSize: chunky ? "64px" : "32px",
+      // fontFamily: "", // Delete if words are hard to read and font-family defaults to sans-serif
       fill: "#fff",
     });
 
@@ -234,7 +245,15 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   handleCorrectWord(i) {
-    this.updateScore(10 * this.activeWords[i].word.length);
+    const chunky = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "Chunky"
+    );
+
+    this.updateScore(
+      chunky
+        ? (10 * this.activeWords[i].word.length) / 2
+        : 10 * this.activeWords[i].word.length
+    );
 
     const emitStars = this.add.particles(0, 0, "star", {
       x: this.activeWords[i].sprite.x,

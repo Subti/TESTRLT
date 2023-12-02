@@ -23,4 +23,9 @@ export const powerUps = [
       scene.pauseWords();
     },
   },
+  {
+    name: "Chunky",
+    description:
+      "Increases the font-size of the words and slows their fall speed by 50% until the end of the game session, but you only gain half the points",
+  },
 ];
