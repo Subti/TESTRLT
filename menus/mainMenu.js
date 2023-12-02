@@ -4,7 +4,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg", "assets/images/bg.jpg");
+    this.load.image("bg", "assets/images/mainBackground.png");
   }
 
   create() {
@@ -46,38 +46,7 @@ export class MenuScene extends Phaser.Scene {
         delay: index * 100, // Stagger the start of each letter's animation
       });
       // Define colour array to cycle through
-      const colors = [
-        "#FF0000",
-        "#800000",
-        "#FFC0CB",
-        "#DC143C",
-        "#B22222",
-        "#FFA500",
-        "#FFD700",
-        "#FFFF00",
-        "#FF4500",
-        "#DAA520",
-        "#008000",
-        "#00FF00",
-        "#228B22",
-        "#32CD32",
-        "#90EE90",
-        "#0000FF",
-        "#000080",
-        "#87CEEB",
-        "#1E90FF",
-        "#4169E1",
-        "#800080",
-        "#EE82EE",
-        "#8A2BE2",
-        "#9400D3",
-        "#9932CC",
-        "#FF69B4",
-        "#C71585",
-        "#FF00FF",
-        "#DB7093",
-        "#FF1493",
-      ];
+      const colors = ["#FF0000","#800000","#FFC0CB","#DC143C","#B22222","#FFA500","#FFD700","#FFFF00","#FF4500","#DAA520","#008000","#00FF00","#228B22","#32CD32","#90EE90","#0000FF","#000080","#87CEEB","#1E90FF","#4169E1","#800080","#EE82EE","#8A2BE2","#9400D3","#9932CC","#FF69B4","#C71585","#FF00FF","#DB7093","#FF1493"];
       let currentColor = 0;
       this.time.addEvent({
         delay: 1000,
@@ -96,7 +65,7 @@ export class MenuScene extends Phaser.Scene {
         scaleX: 0.5,
         scaleY: 0.5,
         x: "+=0",
-        y: 100,
+        y: 150,
         duration: 1000,
         ease: "Power1",
       });
@@ -134,51 +103,55 @@ export class MenuScene extends Phaser.Scene {
       startButton.setAlpha(1);
     });
 
-    // Menu title text with basic style and set initial alpha to 0 fades in at same time as startButton
-    const menuHeader = this.add.text(600, 175, "Main menu", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
-      .setOrigin(0.5, 0.5)
-      .setAlpha(0); // Invisible setting
-
     // Options button takes user to options menu
-    const options = this.add.text(600, 350, "Options", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
+    const optionsButton = this.add.text(600, 375, "Options", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .setAlpha(0) // Invisible setting
       .on("pointerdown", () => this.scene.start("scene-options"));
 
+    // Same animation for optionsButton, starts after gameTitle animation
     const optionsButtonTween = this.tweens.add({
-      targets: options,
-      scaleX: 1.3, // Grow on x axis
-      scaleY: 1.3, // Grow on y axis
-      ease: "Sine.easeInOut", // Use a sine wave for a smoother effect
-      duration: 500, // Run animation for 1000 ms
-      alpha: 0.5, // Fade in
-      yoyo: true, // Reverses animation
-      repeat: -1, // Repeat infinitely
-      paused: true, // Start the animation paused
+      targets: optionsButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
     });
 
     // Start the animation when the pointer is over the options button
-    options.on("pointerover", () => {
+    optionsButton.on("pointerover", () => {
       optionsButtonTween.resume();
     });
 
     // Stop the animation when the pointer is not over the options button
-    options.on("pointerout", () => {
+    optionsButton.on("pointerout", () => {
       optionsButtonTween.restart();
       optionsButtonTween.pause();
-      options.setScale(1, 1);
-      options.setAlpha(1);
+      optionsButton.setScale(1, 1);
+      optionsButton.setAlpha(1);
     });
 
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
       this.tweens.add({
-        targets: [startButton, menuHeader, options],
+        targets: [startButton, optionsButton],
         alpha: 1,
         duration: 1000,
         ease: "Power1",
       });
     });
+
+    // For quick test/debug access to other menus
+    // this.add.text(0,0,"test game over scene", {fontSize: "16px", fill: "#000000"})
+    // .setInteractive()
+    // .on("pointerdown", () => this.scene.start("LossScene"));
+    // this.add.text(600,0,"test win scene", {fontSize:"16px",fill:"#000000"})
+    // .setInteractive()
+    // .on("pointerdown", () => this.scene.start("WinScene"));
   }
 }

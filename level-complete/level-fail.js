@@ -4,12 +4,12 @@ export class LossScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg", "assets/images/bg.jpg");
+    this.load.image("gameoverBG", "assets/images/Summer3.png");
   }
 
   create() {
     // Load background
-    this.add.image(600, 300, "bg");
+    this.add.image(600, 0, "gameoverBG");
     // Add "Game Over" text
     this.add.text(600, 200, 'Game Over', { fontSize: '64px', fontFamily: "Pixelify Sans", fill: '#fff' }).setOrigin(0.5);
 
@@ -23,18 +23,7 @@ export class LossScene extends Phaser.Scene {
         this.registry.set("points", 0);
         this.scene.start('Level1');
       });
-    // Stretch animation for restartButton
-    this.tweens.add({
-      targets: restartButton,
-      scaleX: 1.7,
-      scaleY: 1.7,
-      ease: 'Cubic.easeInOut', // For a smooth transition
-      duration: 1500,
-      yoyo: true,
-      repeat: -1
-    });
-    // Adding a shadow for a "blur-like" effect
-    restartButton.setShadow(2, 2, 'rgba(0,0,0,0.5)', 2, true, true);
+
     // Add "Main Menu" button
     const menuButton = this.add.text(600, 400, 'Main Menu', { fontSize: '32px', fontFamily: "Pixelify Sans", fill: '#fff' })
       .setInteractive()
@@ -43,5 +32,51 @@ export class LossScene extends Phaser.Scene {
         // Go to the main menu
         this.scene.start('scene-menu');
       });
+
+    const restartButtonTween = this.tweens.add({
+      targets: restartButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
+
+    const menuButtonTween = this.tweens.add({
+      targets: menuButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
+
+    menuButton.on("pointerover", () => {
+      menuButtonTween.resume();
+    });
+
+    menuButton.on("pointerout", () => {
+      menuButtonTween.restart();
+      menuButtonTween.pause();
+      menuButton.setScale(1, 1);
+      menuButton.setAlpha(1);
+    });
+
+    restartButton.on("pointerover", () => {
+      restartButtonTween.resume();
+    });
+
+    restartButton.on("pointerout", () => {
+      restartButtonTween.restart();
+      restartButtonTween.pause();
+      restartButton.setScale(1, 1);
+      restartButton.setAlpha(1);
+    });
   }
 }

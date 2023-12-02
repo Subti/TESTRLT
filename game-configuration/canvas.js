@@ -21,7 +21,7 @@ export const canvasConfiguration = {
     default: "arcade",
     arcade: {
       gravity: { y: 50 },
-      debug: true,
+      // debug: true, // Renders outline of all physics objects
     },
   },
   scene: [
