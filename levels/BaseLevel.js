@@ -218,7 +218,7 @@ export class BaseLevel extends Phaser.Scene {
 
     const text = this.add.text(10, 10, word, {
       fontSize: "32px",
-      fontFamily: "Pixelify Sans", // Delete if words are hard to read and font-family defaults to sans-serif
+      // fontFamily: "", // Delete if words are hard to read and font-family defaults to sans-serif
       fill: "#fff",
     });
 
@@ -238,13 +238,7 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   handleCorrectWord(i) {
-    this.registry.set(
-      "points",
-      this.registry.get("points") + 10 * this.activeWords[i].word.length
-    );
-    this.textScore.setText(
-      `Level: ${this.levelNumber} | Score: ${this.registry.get("points")}`
-    );
+    this.updateScore(10 * this.activeWords[i].word.length);
 
     const emitStars = this.add.particles(0, 0, "star", {
       x: this.activeWords[i].sprite.x,
@@ -295,6 +289,43 @@ export class BaseLevel extends Phaser.Scene {
         wordFreeze.effect(this);
       }
     }
+  }
+
+  updateScore(amount) {
+    // Calculate the target score
+    const targetScore = this.registry.get("points") + amount;
+
+    // Calculate the duration of the score animation
+    const duration = 100; // 0.1 seconds
+
+    // Calculate the increment per frame
+    const increment = amount / (duration / 60);
+
+    // Create a timer event
+    let scoreAnimation = this.time.addEvent({
+      delay: 60, // 60 ms = 1 frame
+      callback: () => {
+        // Increase the score
+        let newScore = this.registry.get("points") + increment;
+
+        // Round the score to avoid floating point numbers
+        newScore = Math.round(newScore);
+
+        // Update the score in the registry
+        this.registry.set("points", newScore);
+
+        // Update the score text
+        this.textScore.setText("Score: " + newScore);
+
+        // If the score has reached the target, stop the timer event
+        if (newScore >= targetScore) {
+          this.registry.set("points", targetScore);
+          this.textScore.setText("Score: " + targetScore);
+          scoreAnimation.remove(false);
+        }
+      },
+      loop: true,
+    });
   }
 
   //update assets, anything that needs to be updated every frame (images, sprites, etc), as well as game logic and physics
