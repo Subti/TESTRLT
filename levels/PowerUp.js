@@ -10,7 +10,13 @@ export class PowerUp extends Phaser.Scene {
     this.nextSceneKey = data.nextSceneKey;
   }
 
+  preload() {
+    this.load.image("powerbg", "assets/images/Summer3.png");
+  }
+
   create() {
+    this.add.image(0, 0, "powerbg").setOrigin(0, 0);
+
     // Get the active power-ups from the registry
     const activePowerUps = this.registry.get("activePowerUps") || [];
 
@@ -24,20 +30,17 @@ export class PowerUp extends Phaser.Scene {
       availablePowerUps
     ).slice(0, 3);
 
-    // Create a semi-transparent black rectangle as a background for when we include a background image
-    const background = this.add
-      .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000)
-      .setAlpha(0.5);
-
     // Create cards for the power-ups
     const powerUpCards = selectedPowerUps.map((powerUp, index) => {
-      const card = this.add.rectangle(
-        (this.scale.width / 4) * (index + 1),
-        this.scale.height / 2,
-        200,
-        300,
-        0xffffff
-      );
+      const card = this.add
+        .rectangle(
+          (this.scale.width / 4) * (index + 1),
+          this.scale.height / 2,
+          200,
+          300,
+          0xf5f5dc
+        )
+        .setAlpha(0.5);
 
       // Create power-up text
       const nameText = this.add.text(card.x - 50, card.y - 100, powerUp.name, {
