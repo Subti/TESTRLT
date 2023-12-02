@@ -32,6 +32,7 @@ export class BaseLevel extends Phaser.Scene {
     this.load.audio("ding", "assets/typewriterDing.wav");
     this.load.audio("levelComplete", "assets/levelComplete.wav");
     this.load.audio("loseLife", "assets/loseLife.wav");
+    this.load.audio("type", "assets/typeSound.wav");
     this.load.image("invisibleSprite", "assets/invisibleSprite.png", {
       frameWidth: 32,
       frameHeight: 16,
@@ -70,6 +71,7 @@ export class BaseLevel extends Phaser.Scene {
     this.activePowerUps.push(powerUps[0]);
     this.activePowerUps.push(powerUps[1]);
 
+    this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
     this.levelComplete = this.sound.add("levelComplete");
     this.loseLife = this.sound.add("loseLife");
@@ -121,6 +123,7 @@ export class BaseLevel extends Phaser.Scene {
 
     //this is the event listener for when the player types something and handles what will happen when they type something
     this.input.keyboard.on("keydown", (event) => {
+      this.typeSound.play();
       if (event.key === "Backspace") {
         this.currentWord = this.currentWord.slice(0, -1);
       } else if (event.key.length === 1 && /^[a-z0-9]$/i.test(event.key)) {
