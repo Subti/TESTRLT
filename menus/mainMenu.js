@@ -17,7 +17,7 @@ export class MenuScene extends Phaser.Scene {
     this.add.image(600, 300, "bg");
 
     const gameTitle = "Project RLT";
-    let startX = 400; // X position needs to be mutable, the value gets redefined in the forEach method below
+    let startX = 350; // X position needs to be mutable, the value gets redefined in the forEach method below
 
     // Container to hold all letters
     const fallingLetters = this.add.group();
@@ -25,13 +25,11 @@ export class MenuScene extends Phaser.Scene {
     // Loop through each letter
     gameTitle.split("").forEach((letter, index) => {
       // Create a text object for each letter
-      const letterText = this.add
-        .text(startX, -50, letter, {
-          fontSize: "96px",
-          fontFamily: "Nova Square", // Referencing font family from style.css import
-          color: "#fff",
-        })
-        .setOrigin(0.5);
+      const letterText = this.add.text(startX, -50, letter, {
+        fontSize: '96px',
+        fontFamily: 'Pixelify Sans',
+        color: '#fff'
+      }).setOrigin(0.5);
 
       // Add letter to the group
       fallingLetters.add(letterText);
@@ -105,12 +103,7 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Create start button and set initial alpha to 0 for it to fade in later
-    const startButton = this.add
-      .text(600, 300, "Start Game", {
-        fontSize: "32px",
-        fontFamily: "Nova Square",
-        fill: "#fff",
-      })
+    const startButton = this.add.text(600, 300, "Start Game", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .setAlpha(0) // Invisible setting
@@ -142,22 +135,12 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Menu title text with basic style and set initial alpha to 0 fades in at same time as startButton
-    const menuHeader = this.add
-      .text(600, 175, "Main menu", {
-        fontSize: "32px",
-        fontFamily: "Nova Square",
-        fill: "#fff",
-      })
+    const menuHeader = this.add.text(600, 175, "Main menu", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
       .setOrigin(0.5, 0.5)
       .setAlpha(0); // Invisible setting
 
     // Options button takes user to options menu
-    const options = this.add
-      .text(600, 350, "Options", {
-        fontSize: "32px",
-        fontFamily: "Nova Square",
-        fill: "#fff",
-      })
+    const options = this.add.text(600, 350, "Options", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .setAlpha(0) // Invisible setting

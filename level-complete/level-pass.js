@@ -18,7 +18,7 @@ export class WinScene extends Phaser.Scene {
     // Add continue button
     if (this.nextSceneKey) {
       const continueButton = this.add
-        .text(600, 300, "Continue", { fontSize: "32px", fill: "#0f0" })
+        .text(600, 300, "Continue", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#0f0" })
         .setOrigin(0.5, 0.5)
         .setInteractive()
         .on("pointerdown", () => this.scene.start(this.nextSceneKey)); // Start the next level when the continue button is clicked
@@ -41,7 +41,7 @@ export class WinScene extends Phaser.Scene {
         .setOrigin(0.5, 0.5);
 
       const backButton = this.add
-        .text(600, 300, "Back to Menu", { fontSize: "32px", fill: "#0f0" })
+        .text(600, 300, "Back to Menu", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#0f0" })
         .setOrigin(0.5, 0.5)
         .setInteractive()
         .on("pointerdown", () => this.scene.start("scene-menu")); // Go back to MenuScene when the back button is clicked

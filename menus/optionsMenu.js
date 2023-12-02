@@ -12,7 +12,7 @@ export class OptionsScene extends Phaser.Scene {
     this.add.image(600, 300, "bg");
 
     const backButton = this.add
-      .text(600, 300, "Back to Menu", { fontSize: "32px", fill: "white" })
+      .text(600, 300, "Back to Menu", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "white" })
       .setOrigin(0.5, 0.5)
       .setInteractive()
       .on("pointerdown", () => this.scene.start("scene-menu"));
