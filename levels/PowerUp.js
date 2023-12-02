@@ -14,43 +14,60 @@ export class PowerUp extends Phaser.Scene {
     // Select three random power-ups
     const selectedPowerUps = Phaser.Utils.Array.Shuffle(powerUps).slice(0, 3);
 
-    // Create a semi-transparent black rectangle as a background
+    // Create a semi-transparent black rectangle as a background for when we include a background image
     const background = this.add
       .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000)
       .setAlpha(0.5);
 
-    // Create a white rectangle as a pop-up
-    const popup = this.add.rectangle(
-      this.scale.width / 2,
-      this.scale.height / 2,
-      300,
-      200,
-      0xffffff
-    );
-
-    // Create text for the power-ups
-    const powerUpTexts = selectedPowerUps.map((powerUp, index) => {
-      const text = this.add.text(
-        popup.x - 100,
-        popup.y - 50 + index * 50,
-        powerUp.name,
-        { fontSize: "32px", fill: "#000" }
+    // Create cards for the power-ups
+    const powerUpCards = selectedPowerUps.map((powerUp, index) => {
+      const card = this.add.rectangle(
+        (this.scale.width / 4) * (index + 1),
+        this.scale.height / 2,
+        200,
+        300,
+        0xffffff
       );
-      text.setInteractive();
-      text.on("pointerdown", () => {
+
+      // Create power-up text
+      const nameText = this.add.text(card.x - 50, card.y - 100, powerUp.name, {
+        fontSize: "24px",
+        fill: "#000",
+        align: "center",
+      });
+
+      const descriptionText = this.add.text(
+        card.x,
+        card.y - 50,
+        powerUp.description,
+        {
+          fontSize: "16px",
+          fill: "#000",
+          wordWrap: { width: card.width - 20 }, // Subtract a small amount to add some padding
+          align: "center",
+        }
+      );
+
+      // Center (or at least attempt to) the origin of the text
+      descriptionText.setOrigin(0.5, 0);
+
+      // Make the card interactive
+      card.setInteractive();
+      card.on("pointerdown", () => {
         // Activate the selected power-up and start the next scene
         this.activatePowerUp(powerUp);
         this.scene.start(this.nextSceneKey);
       });
-      return text;
+
+      return { card, nameText, descriptionText };
     });
   }
 
   activatePowerUp(powerUp) {
-    // Get the active power-ups from the registry
+    // Get the active power-ups from the registry so that it translates across the session
     let activePowerUps = this.registry.get("activePowerUps");
 
-    // If there are no active power-ups, initialize the array
+    // If there are no active power-ups, initialize the array (useless check, but just in case)
     if (!activePowerUps) {
       activePowerUps = [];
     }

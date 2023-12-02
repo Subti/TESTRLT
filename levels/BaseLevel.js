@@ -336,7 +336,9 @@ export class BaseLevel extends Phaser.Scene {
         // If the score has reached the target, stop the timer event
         if (newScore >= this.targetScore) {
           this.registry.set("points", this.targetScore);
-          this.textScore.setText("Score: " + this.targetScore);
+          this.textScore.setText(
+            `Level: ${this.levelNumber} | Score: ${this.targetScore}`
+          );
           this.scoreAnimation.remove(false);
           this.scoreAnimation = null;
         }
@@ -385,7 +387,7 @@ export class BaseLevel extends Phaser.Scene {
 
       this.levelComplete.play();
 
-      if (this.levelNumber % 3 === 0 && this.levelNumber < 7) {
+      if (this.levelNumber % 1 === 0 && this.levelNumber < 7) {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
         // Transition to win scene
