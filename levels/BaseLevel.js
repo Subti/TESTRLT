@@ -292,17 +292,23 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   updateScore(amount) {
+    // If a score update is already in progress, add the new score to the target score
+    if (this.scoreAnimation) {
+      this.targetScore += amount;
+      return;
+    }
+
     // Calculate the target score
-    const targetScore = this.registry.get("points") + amount;
+    this.targetScore = this.registry.get("points") + amount;
 
     // Calculate the duration of the score animation
-    const duration = 100; // 0.1 seconds
+    const duration = 500; // 0.5 seconds
 
     // Calculate the increment per frame
     const increment = amount / (duration / 60);
 
     // Create a timer event
-    let scoreAnimation = this.time.addEvent({
+    this.scoreAnimation = this.time.addEvent({
       delay: 60, // 60 ms = 1 frame
       callback: () => {
         // Increase the score
@@ -318,10 +324,11 @@ export class BaseLevel extends Phaser.Scene {
         this.textScore.setText("Score: " + newScore);
 
         // If the score has reached the target, stop the timer event
-        if (newScore >= targetScore) {
-          this.registry.set("points", targetScore);
-          this.textScore.setText("Score: " + targetScore);
-          scoreAnimation.remove(false);
+        if (newScore >= this.targetScore) {
+          this.registry.set("points", this.targetScore);
+          this.textScore.setText("Score: " + this.targetScore);
+          this.scoreAnimation.remove(false);
+          this.scoreAnimation = null;
         }
       },
       loop: true,
