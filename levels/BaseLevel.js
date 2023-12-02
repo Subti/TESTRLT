@@ -329,7 +329,9 @@ export class BaseLevel extends Phaser.Scene {
         this.registry.set("points", newScore);
 
         // Update the score text
-        this.textScore.setText("Score: " + newScore);
+        this.textScore.setText(
+          `Level: ${this.levelNumber} | Score: ${newScore}`
+        );
 
         // If the score has reached the target, stop the timer event
         if (newScore >= this.targetScore) {
