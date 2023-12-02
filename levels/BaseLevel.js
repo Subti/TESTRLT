@@ -170,6 +170,12 @@ export class BaseLevel extends Phaser.Scene {
 
       // Run player hurt animation
       this.player.anims.play("hurt");
+
+      // After 1.5 seconds, switch back to the idle animation
+      setTimeout(() => {
+        this.player.anims.play("idle");
+      }, 1500);
+
       // Remove the last heart from the container
       const lastHeart = this.livesContainer.list.pop();
       lastHeart.destroy();
