@@ -77,13 +77,6 @@ export class BaseLevel extends Phaser.Scene {
     //this initializes what the player is currently typing
     this.currentWord = "";
 
-    this.timedEvent = this.time.addEvent({
-      delay: 6000000,
-      callback: this.onClockEvent,
-      callbackScope: this,
-      repeat: 1,
-    });
-
     //add background image
     this.add.image(600, 300, "bg"); //.setOrigin(0, 0);
 
@@ -242,7 +235,15 @@ export class BaseLevel extends Phaser.Scene {
       fill: "#000000",
     });
 
-    this.activeWords.push({ sprite, text, word, velocity: velocityY });
+    const wordTimer = this.time.now;
+
+    this.activeWords.push({
+      sprite,
+      text,
+      word,
+      velocity: velocityY,
+      wordTimer,
+    });
   }
 
   pauseWords() {
@@ -258,15 +259,24 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   handleCorrectWord(i) {
+    let pointsToAdd;
+
     const chunky = this.activePowerUps.find(
       (powerUp) => powerUp.name === "Chunky"
     );
 
-    this.updateScore(
-      chunky
-        ? (10 * this.activeWords[i].word.length) / 2
-        : 10 * this.activeWords[i].word.length
-    );
+    let elapsedTime = this.time.now - this.activeWords[i].wordTimer;
+    console.log(elapsedTime);
+    let additionalPoints = Math.floor(30000 / elapsedTime);
+
+    if (chunky) {
+      pointsToAdd =
+        (10 * this.activeWords[i].word.length + additionalPoints) / 2;
+    } else {
+      pointsToAdd = 10 * this.activeWords[i].word.length + additionalPoints;
+    }
+
+    this.updateScore(pointsToAdd);
 
     const emitStars = this.add.particles(0, 0, "star", {
       x: this.activeWords[i].sprite.x,
@@ -400,18 +410,13 @@ export class BaseLevel extends Phaser.Scene {
       this.activeWords.length === 0 &&
       this.registry.get("lives") > 0
     ) {
-      // Uses timer to add a multiplier
-      this.registry.set(
-        "points",
-        Math.floor(
-          this.registry.get("points") *
-            Math.floor((60 - this.timedEvent.getElapsedSeconds()) / 10)
-        )
-      );
-
       this.levelComplete.play();
 
-      if (this.levelNumber % 1 === 0 && this.levelNumber < 7) {
+      if (
+        this.levelNumber % 1 === 0 &&
+        this.levelNumber < 7 &&
+        this.activePowerUps.length !== powerUps.length
+      ) {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
         // Transition to win scene
