@@ -123,8 +123,8 @@ export class BaseLevel extends Phaser.Scene {
     this.input.keyboard.on("keydown", (event) => {
       this.typeSound.play();
       if (event.key === "Backspace") {
-        this.currentWord = this.currentWord.slice(0, -1);
-      } else if (event.key.length === 1 && /^[a-z0-9]$/i.test(event.key)) {
+        this.currentWord = "";
+      } else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
         this.currentWord += event.key;
       }
 
@@ -266,7 +266,6 @@ export class BaseLevel extends Phaser.Scene {
     );
 
     let elapsedTime = this.time.now - this.activeWords[i].wordTimer;
-    console.log(elapsedTime);
     let additionalPoints = Math.floor(30000 / elapsedTime);
 
     if (chunky) {
@@ -413,7 +412,7 @@ export class BaseLevel extends Phaser.Scene {
       this.levelComplete.play();
 
       if (
-        this.levelNumber % 1 === 0 &&
+        this.levelNumber % 3 === 0 &&
         this.levelNumber < 7 &&
         this.activePowerUps.length !== powerUps.length
       ) {

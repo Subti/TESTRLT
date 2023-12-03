@@ -5,7 +5,9 @@ export class WinScene extends Phaser.Scene {
 
   preload() {
     this.load.image("bg", "assets/images/mainBackground.png");
-    this.load.spritesheet("fireworks", "assets/vfx/HolyExplosion_96x96.png", { frameWidth: 96 });
+    this.load.spritesheet("fireworks", "assets/vfx/HolyExplosion_96x96.png", {
+      frameWidth: 96,
+    });
   }
 
   init(data) {
@@ -16,7 +18,7 @@ export class WinScene extends Phaser.Scene {
   create() {
     // Load background
     this.add.image(600, 300, "bg");
-    
+
     // Create a sprite for the fireworks
     const fireworks = this.add.sprite(
       Phaser.Math.Between(0, 1200), // Random x position
@@ -41,7 +43,11 @@ export class WinScene extends Phaser.Scene {
     // Add continue button if player passes level
     if (this.nextSceneKey) {
       const continueButton = this.add
-        .text(600, 300, "Continue", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
+        .text(600, 300, "Continue", {
+          fontSize: "32px",
+          fontFamily: "Pixelify Sans",
+          fill: "#fff",
+        })
         .setOrigin(0.5, 0.5)
         .setInteractive()
         .on("pointerdown", () => this.scene.start(this.nextSceneKey)); // Start the next level when the continue button is clicked
@@ -56,6 +62,14 @@ export class WinScene extends Phaser.Scene {
         repeat: -1,
         paused: true,
       });
+
+      const pointsText = this.add
+        .text(600, 400, `Points: ${this.registry.get("points")}`, {
+          fontSize: "32px",
+          fontFamily: "Pixelify Sans",
+          fill: "#000000",
+        })
+        .setOrigin(0.5, 0.5);
 
       continueButton.on("pointerover", () => {
         continueButtonTween.resume();
@@ -76,8 +90,20 @@ export class WinScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0.5);
 
+      const winPoints = this.add
+        .text(600, 250, `Points: ${this.registry.get("points")}`, {
+          fontSize: "32px",
+          fontFamily: "Pixelify Sans",
+          fill: "#000000",
+        })
+        .setOrigin(0.5, 0.5);
+
       const menuButton = this.add
-        .text(600, 300, "Back to Menu", { fontSize: "32px", fontFamily: "Pixelify Sans", fill: "#fff" })
+        .text(600, 300, "Back to Menu", {
+          fontSize: "32px",
+          fontFamily: "Pixelify Sans",
+          fill: "#fff",
+        })
         .setOrigin(0.5, 0.5)
         .setInteractive()
         .on("pointerdown", () => this.scene.start("scene-menu")); // Go back to MenuScene when the back button is clicked
@@ -103,6 +129,6 @@ export class WinScene extends Phaser.Scene {
         menuButton.setScale(1, 1);
         menuButton.setAlpha(1);
       });
-    };
-  };
-};
+    }
+  }
+}
