@@ -4,7 +4,13 @@ export const powerUps = [
     description: "Pops the next word after 3 correct words in a row",
     effect: function (scene) {
       if (scene.activeWords.length > 2) {
-        scene.handleCorrectWord(scene.activeWords.length - 1);
+        let highestYIndex = 0;
+        for (let i = 1; i < scene.activeWords.length; i++) {
+          if (scene.activeWords[i].y > scene.activeWords[highestYIndex].y) {
+            highestYIndex = i;
+          }
+        }
+        scene.handleCorrectWord(highestYIndex);
       }
     },
   },
