@@ -88,6 +88,10 @@ export class PowerUp extends Phaser.Scene {
     // Add the power-up to the active power-ups
     activePowerUps.push(powerUp);
 
+    if (powerUp.name === "Beefy") {
+      powerUp.effect(this);
+    }
+
     // Store the active power-ups in the registry
     this.registry.set("activePowerUps", activePowerUps);
   }

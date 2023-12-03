@@ -34,4 +34,19 @@ export const powerUps = [
     description:
       "Increases the font-size of the words and slows their fall speed by 50% until the end of the game session, but you only gain half the points",
   },
+  {
+    name: "Beefy",
+    description: "Increase life total to 5 and replenish life to full",
+    effect: function (scene) {
+      scene.registry.set("lives", 5);
+    },
+  },
+  {
+    name: "Recuperate",
+    description:
+      "For every 10 words typed correctly in a row, replenish 1 life",
+    effect: function (scene) {
+      scene.registry.set("lives", scene.registry.get("lives") + 1);
+    },
+  },
 ];

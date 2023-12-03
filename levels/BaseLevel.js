@@ -148,6 +148,8 @@ export class BaseLevel extends Phaser.Scene {
     this.physics.add.overlap(this.words, this.platform, (word) => {
       // Reduce the number of lives
       this.registry.set("lives", this.registry.get("lives") - 1);
+      //Reset combo counter
+      this.comboCounter = 0;
 
       // Update text in game data
       this.playerStats.setText(
@@ -259,11 +261,34 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   handleCorrectWord(i) {
+    // Increase the correct words counter
+    this.comboCounter++;
+
     let pointsToAdd;
 
     const chunky = this.activePowerUps.find(
       (powerUp) => powerUp.name === "Chunky"
     );
+
+    const recuperate = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "Recuperate"
+    );
+
+    const beefy = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "Beefy"
+    );
+
+    if (recuperate && this.comboCounter % 10 === 0) {
+      if (beefy) {
+        if (this.registry.get("lives") < 5) {
+          recuperate.effect(this);
+        }
+      } else {
+        if (this.registry.get("lives") < 3) {
+          recuperate.effect(this);
+        }
+      }
+    }
 
     let elapsedTime = this.time.now - this.activeWords[i].wordTimer;
     let additionalPoints = Math.floor(30000 / elapsedTime);
@@ -298,8 +323,6 @@ export class BaseLevel extends Phaser.Scene {
     // Clear the current word
     this.currentWord = "";
     this.currentWordText.setText(this.currentWord);
-    // Increase the correct words counter
-    this.comboCounter++;
 
     // Check if the WordPop power-up should be activated
     if (this.comboCounter % 3 === 0) {
@@ -412,7 +435,7 @@ export class BaseLevel extends Phaser.Scene {
       this.levelComplete.play();
 
       if (
-        this.levelNumber % 3 === 0 &&
+        this.levelNumber % 1 === 0 &&
         this.levelNumber < 7 &&
         this.activePowerUps.length !== powerUps.length
       ) {
