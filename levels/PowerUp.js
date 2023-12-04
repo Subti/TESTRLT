@@ -20,11 +20,8 @@ export class PowerUp extends Phaser.Scene {
     // Get the active power-ups from the registry
     const activePowerUps = this.registry.get("activePowerUps") || [];
 
-    console.log(activePowerUps);
-
     // Filter out the active power-ups
     const availablePowerUps = powerUps.filter((powerUp) => {
-      console.log(powerUp);
       if (activePowerUps.includes(powerUp)) {
         return false; // Filter out if the power-up is already active
       }
@@ -94,6 +91,19 @@ export class PowerUp extends Phaser.Scene {
 
       return { card, nameText, descriptionText };
     });
+
+    // Add "Restart" button
+    const skipButton = this.add
+      .text(600, 500, "Skip Power-Up Selection", {
+        fontSize: "32px",
+        fontFamily: "Pixelify Sans",
+        fill: "#fff",
+      })
+      .setInteractive()
+      .setOrigin(0.5)
+      .on("pointerdown", () => {
+        this.scene.start(this.nextSceneKey);
+      });
   }
 
   activatePowerUp(powerUp) {

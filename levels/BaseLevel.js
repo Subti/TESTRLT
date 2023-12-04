@@ -44,9 +44,29 @@ export class BaseLevel extends Phaser.Scene {
 
     this.registry.set("loaded", false);
 
+    // Get the active power-ups from the registry
+    this.activePowerUps = this.registry.get("activePowerUps");
+
+    this.originalPointsMultiplier = this.registry.get("pointsMultiplier");
+    this.originalWordQuantityMultiplier = this.registry.get(
+      "wordQuantityMultiplier"
+    );
+
+    const coinFlip = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "CoinFlip"
+    );
+
+    if (coinFlip) {
+      coinFlip.effect(this);
+    }
+
+    let fetchQuantity = Math.round(
+      this.wordQuantity * this.registry.get("wordQuantityMultiplier")
+    );
+
     //batch call the api to get a bunch of words at once
     fetch(
-      `https://random-word-api.vercel.app/api?words=${this.wordQuantity}&length=${this.wordLength}`
+      `https://random-word-api.vercel.app/api?words=${fetchQuantity}&length=${this.wordLength}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -67,9 +87,6 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    // Get the active power-ups from the registry
-    this.activePowerUps = this.registry.get("activePowerUps");
-
     this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
     this.levelComplete = this.sound.add("levelComplete");
@@ -434,6 +451,12 @@ export class BaseLevel extends Phaser.Scene {
       this.registry.get("lives") > 0
     ) {
       this.levelComplete.play();
+
+      this.registry.set("pointsMultiplier", this.originalPointsMultiplier);
+      this.registry.set(
+        "wordQuantityMultiplier",
+        this.originalWordQuantityMultiplier
+      );
 
       if (
         this.levelNumber % 1 === 0 &&

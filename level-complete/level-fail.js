@@ -43,6 +43,7 @@ export class LossScene extends Phaser.Scene {
         this.registry.set("isColliding", false);
         this.registry.set("lives", 3);
         this.registry.set("pointsMultiplier", 1);
+        this.registry.set("wordQuantityMultiplier", 1);
         this.registry.set("activePowerUps", []);
         this.scene.start("Level1");
       });

@@ -34,7 +34,10 @@ export const powerUps = [
     description:
       "Increases the font-size of the words and slows their fall speed by 50% until the end of the game session, but you only gain half the points. Posessing Chunky prevents Phoon from appearing.",
     effect: function (scene) {
-      scene.registry.set("pointsMultiplier", 0.5);
+      scene.registry.set(
+        "pointsMultiplier",
+        scene.registry.get("pointsMultiplier") / 2
+      );
     },
   },
   {
@@ -57,7 +60,37 @@ export const powerUps = [
     description:
       "Decreases the font-size of the words and increases their fall speed by 50% until the end of the game session, but you gain double the points. Posessing Phoon prevents Chunky from appearing.",
     effect: function (scene) {
-      scene.registry.set("pointsMultiplier", 2);
+      scene.registry.set(
+        "pointsMultiplier",
+        scene.registry.get("pointsMultiplier") * 2
+      );
+    },
+  },
+  {
+    name: "Coin flip",
+    description:
+      "Levels now either contain double or half the amount of words. (Points are adjusted accordingly)",
+    effect: function (scene) {
+      const random = Math.random();
+      if (random < 0.5) {
+        scene.registry.set(
+          "wordQuantityMultiplier",
+          scene.registry.get("wordQuantityMultiplier") * 2
+        );
+        scene.registry.set(
+          "pointsMultiplier",
+          scene.registry.get("pointsMultiplier") / 2
+        );
+      } else {
+        scene.registry.set(
+          "wordQuantityMultiplier",
+          scene.registry.get("wordQuantityMultiplier") / 2
+        );
+        scene.registry.set(
+          "pointsMultiplier",
+          scene.registry.get("pointsMultiplier") * 2
+        );
+      }
     },
   },
 ];
