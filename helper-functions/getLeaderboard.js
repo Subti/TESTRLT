@@ -1,5 +1,4 @@
-// Insert HTML form elements for player to register an account
-export function createRegisterForm(scene) {
+export function displayLeaderBoard(scene) {
   const formDiv = document.createElement('div');
   formDiv.className = 'overlayHTML';
   formDiv.innerHTML = `
@@ -19,11 +18,9 @@ export function createRegisterForm(scene) {
     }
   });
 };
-// Prevent the page from refreshing which is default for form submission
-async function handleRegisterSubmit(event, scene) {
+
+async function getLeaderboard(event, scene) {
   event.preventDefault();
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData.entries());
 
   try { // Use fetch to send form data to the Express server
     const response = await fetch('/api/register', {
@@ -49,33 +46,5 @@ async function handleRegisterSubmit(event, scene) {
     console.error('Error:', error);
     showErrorMessage(scene, 'Registration failed');
     resetFormFields();
-  }
-}
-// Wrap multiple functions in one for intended order of execution
-function showSuccessMessage(scene, message) {
-  let successText = scene.add.text(600, 300, message, { fill: '#000000' });
-
-  // Wait for 3 seconds, then switch scene
-  setTimeout(() => {
-    successText.destroy();
-    removeRegisterForm();
-    switchToMenuScene(scene);
-  }, 3000);
-}
-// Send player back to menu without reloading the page
-function switchToMenuScene(scene) {
-  scene.scene.start('scene-menu');
-}
-// If registration fails the input fields are emptied
-function resetFormFields() {
-  document.getElementById('username').value = '';
-  document.getElementById('email').value = '';
-  document.getElementById('password').value = '';
-}
-// Fields stayed after sending player back to menu, this removes the elements
-function removeRegisterForm() {
-  const formDiv = document.querySelector('.overlayHTML');
-  if (formDiv) {
-    formDiv.remove();
   }
 }

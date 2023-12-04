@@ -30,6 +30,18 @@ app.post('/api/register', async (req, res) => {
     }
   }
 });
+app.get('api/leaderboard', async (req, res) => {
+  try {
+    const queryText = 'SELECT username, score FROM Users ORDER BY score DESC LIMIT 5';
+    const dbResponse = await pool.query(queryText);
+    res.status(201).json({ message: `Here's the top scores!`, scores: dbResponse.rows[0] });
+
+    
+  } catch (error) {
+    console.error('Error in registration', error.message);
+    
+  }
+})
 
 // Start the express server on port 3000
 const PORT = 3000;
