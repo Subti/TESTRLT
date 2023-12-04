@@ -31,6 +31,37 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Query to find the user by username
+    const queryText = 'SELECT * FROM Users WHERE username = $1';
+    const queryValues = [username];
+    const dbResponse = await pool.query(queryText, queryValues);
+    // If data is received and contains at least one key
+    if (dbResponse.rows.length > 0) {
+      const user = dbResponse.rows[0];
+      
+      // If password matches
+      if (password === user.password) {
+        res.status(200).json({ message: 'Login successful', userId: user.id });
+      } else {
+        res.status(401).json({ message: 'Invalid username or password' });
+      }
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  }
+  catch (error) {
+    console.error('Error in login', error.message);
+    if (!res.headersSent) {
+      res.status(500).send('Server error during login');
+    }
+  }
+});
+
+
 // Start the express server on port 3000
 const PORT = 3000;
 app.listen(PORT, () => {
