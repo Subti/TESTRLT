@@ -1,6 +1,7 @@
 import { MenuScene } from "../menus/mainMenu";
 import { OptionsScene } from "../menus/optionsMenu";
 import { RegisterScene } from "../menus/registerMenu.js";
+import { LoginScene } from "../menus/loginMenu.js";
 import { WinScene } from "../level-complete/level-pass";
 import { LossScene } from "../level-complete/level-fail";
 import { BaseLevel } from "../levels/BaseLevel";
@@ -30,6 +31,7 @@ export const canvasConfiguration = {
     MenuScene,
     OptionsScene,
     RegisterScene,
+    LoginScene,
     BaseLevel,
     PowerUp,
     Level1,
