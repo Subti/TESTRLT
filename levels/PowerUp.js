@@ -61,9 +61,9 @@ export class PowerUp extends Phaser.Scene {
 
       // Create power-up text
       const nameText = this.add.text(card.x - 50, card.y - 100, powerUp.name, {
-        fontSize: "24px",
+        fontSize: "20px",
         fill: "#000",
-        align: "center",
+
       });
 
       const descriptionText = this.add.text(
@@ -74,7 +74,7 @@ export class PowerUp extends Phaser.Scene {
           fontSize: "16px",
           fill: "#000",
           wordWrap: { width: card.width - 20 }, // Subtract a small amount to add some padding
-          align: "center",
+          
         }
       );
 
