@@ -16,9 +16,11 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("wordQuantityMultiplier", 1);
     this.registry.set("revived", false);
     this.registry.set("activePowerUps", []);
-
-    // Load background
     this.add.image(600, 300, "bg");
+    // Check if user loginStatus was set, if not then set to false
+    if (this.registry.get("loginStatus") === undefined) {
+      this.registry.set("loginStatus", false);
+    }
 
     const gameTitle = "Project RLT";
     let startX = 350; // X position needs to be mutable, the value gets redefined in the forEach method below
@@ -76,7 +78,73 @@ export class MenuScene extends Phaser.Scene {
         ease: "Power1",
       });
     });
-    // Start button
+    // Sends player to login
+    const loginButton = this.add
+      .text(600, 250, "Login", {
+        fontSize: "32px",
+        fontFamily: "Pixelify Sans",
+        fill: "#fff",
+      })
+      .setInteractive()
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .on("pointerdown", () => this.scene.start("LoginScene"));
+
+    const loginButtonTween = this.tweens.add({
+      targets: loginButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
+
+    loginButton.on("pointerover", () => {
+      loginButtonTween.resume();
+    });
+
+    loginButton.on("pointerout", () => {
+      loginButtonTween.restart();
+      loginButtonTween.pause();
+      loginButton.setAlpha(1);
+    });
+    // Sends player to registration
+    const registerButton = this.add
+      .text(600, 200, "Register", {
+        fontSize: "32px",
+        fontFamily: "Pixelify Sans",
+        fill: "#fff",
+      })
+      .setInteractive()
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .on("pointerdown", () => this.scene.start("RegisterScene"));
+
+    const registerButtonTween = this.tweens.add({
+      targets: registerButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
+
+    registerButton.on("pointerover", () => {
+      registerButtonTween.resume();
+    });
+
+    registerButton.on("pointerout", () => {
+      registerButtonTween.restart();
+      registerButtonTween.pause();
+      registerButton.setAlpha(1);
+    });
+    // Starts game when clicked
     const startButton = this.add
       .text(600, 300, "Start Game", {
         fontSize: "32px",
@@ -109,43 +177,9 @@ export class MenuScene extends Phaser.Scene {
       startButtonTween.pause();
       startButton.setAlpha(1);
     });
-
-    const registerButton = this.add
-      .text(600, 225, "Register", {
-        fontSize: "32px",
-        fontFamily: "Pixelify Sans",
-        fill: "#fff",
-      })
-      .setInteractive()
-      .setOrigin(0.5)
-      .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("RegisterScene"));
-
-    const registerButtonTween = this.tweens.add({
-      targets: registerButton,
-      scaleX: 1.3,
-      scaleY: 1.3,
-      ease: "Sine.easeInOut",
-      duration: 500,
-      alpha: 0.5,
-      yoyo: true,
-      repeat: -1,
-      paused: true,
-    });
-
-    registerButton.on("pointerover", () => {
-      registerButtonTween.resume();
-    });
-
-    registerButton.on("pointerout", () => {
-      registerButtonTween.restart();
-      registerButtonTween.pause();
-      registerButton.setAlpha(1);
-    });
-
     // Options button takes user to options menu
     const optionsButton = this.add
-      .text(600, 375, "Options", {
+      .text(600, 350, "Options", {
         fontSize: "32px",
         fontFamily: "Pixelify Sans",
         fill: "#fff",
@@ -180,7 +214,7 @@ export class MenuScene extends Phaser.Scene {
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
       this.tweens.add({
-        targets: [startButton, optionsButton, registerButton],
+        targets: [startButton, optionsButton, registerButton, loginButton],
         alpha: 1,
         duration: 1000,
         ease: "Power1",
