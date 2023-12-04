@@ -38,8 +38,12 @@ export class LossScene extends Phaser.Scene {
       .setOrigin(0.5)
       .on("pointerdown", () => {
         // Re-initialize lives and points then send player back to level 1
-        this.registry.set("lives", 3);
         this.registry.set("points", 0);
+        this.registry.set("speedDown", 150);
+        this.registry.set("isColliding", false);
+        this.registry.set("lives", 3);
+        this.registry.set("pointsMultiplier", 1);
+        this.registry.set("activePowerUps", []);
         this.scene.start("Level1");
       });
 

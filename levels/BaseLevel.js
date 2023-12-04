@@ -222,8 +222,16 @@ export class BaseLevel extends Phaser.Scene {
       (powerUp) => powerUp.name === "Chunky"
     );
 
+    const phoon = this.activePowerUps.find(
+      (powerUp) => powerUp.name === "Phoon"
+    );
+
     if (chunky) {
       velocityY /= 2;
+    }
+
+    if (phoon) {
+      velocityY *= 2;
     }
 
     const sprite = this.words
@@ -233,7 +241,7 @@ export class BaseLevel extends Phaser.Scene {
     sprite.body.setAllowGravity(false);
 
     const text = this.add.text(10, 10, word, {
-      fontSize: chunky ? "64px" : "32px",
+      fontSize: chunky ? "64px" : phoon ? "16px" : "32px",
       fill: "#000000",
     });
 
@@ -266,10 +274,6 @@ export class BaseLevel extends Phaser.Scene {
 
     let pointsToAdd;
 
-    const chunky = this.activePowerUps.find(
-      (powerUp) => powerUp.name === "Chunky"
-    );
-
     const recuperate = this.activePowerUps.find(
       (powerUp) => powerUp.name === "Recuperate"
     );
@@ -293,12 +297,9 @@ export class BaseLevel extends Phaser.Scene {
     let elapsedTime = this.time.now - this.activeWords[i].wordTimer;
     let additionalPoints = Math.floor(30000 / elapsedTime);
 
-    if (chunky) {
-      pointsToAdd =
-        (10 * this.activeWords[i].word.length + additionalPoints) / 2;
-    } else {
-      pointsToAdd = 10 * this.activeWords[i].word.length + additionalPoints;
-    }
+    pointsToAdd =
+      (10 * this.activeWords[i].word.length + additionalPoints) *
+      this.registry.get("pointsMultiplier");
 
     this.updateScore(pointsToAdd);
 

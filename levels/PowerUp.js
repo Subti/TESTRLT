@@ -20,10 +20,30 @@ export class PowerUp extends Phaser.Scene {
     // Get the active power-ups from the registry
     const activePowerUps = this.registry.get("activePowerUps") || [];
 
+    console.log(activePowerUps);
+
     // Filter out the active power-ups
-    const availablePowerUps = powerUps.filter(
-      (powerUp) => !activePowerUps.includes(powerUp)
-    );
+    const availablePowerUps = powerUps.filter((powerUp) => {
+      console.log(powerUp);
+      if (activePowerUps.includes(powerUp)) {
+        return false; // Filter out if the power-up is already active
+      }
+
+      if (
+        (powerUp.name === "Chunky" &&
+          activePowerUps.some(
+            (activePowerUp) => activePowerUp.name === "Phoon"
+          )) ||
+        (powerUp.name === "Phoon" &&
+          activePowerUps.some(
+            (activePowerUp) => activePowerUp.name === "Chunky"
+          ))
+      ) {
+        return false; // Filter out "chunky" if "phoon" is active or "phoon" if "chunky" is active
+      }
+
+      return true;
+    });
 
     // Select three random power-ups
     const selectedPowerUps = Phaser.Utils.Array.Shuffle(
@@ -89,6 +109,14 @@ export class PowerUp extends Phaser.Scene {
     activePowerUps.push(powerUp);
 
     if (powerUp.name === "Beefy") {
+      powerUp.effect(this);
+    }
+
+    if (powerUp.name === "Chunky") {
+      powerUp.effect(this);
+    }
+
+    if (powerUp.name === "Phoon") {
       powerUp.effect(this);
     }
 
