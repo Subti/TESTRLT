@@ -41,8 +41,7 @@ body {
 
 /* Flexbox styling for all header/footer elements */
 header,
-footer,
-.credits {
+footer {
   display: flex;
   flex-flow: column wrap;
   justify-content: center;
@@ -131,4 +130,36 @@ main {
 .credits li {
   list-style-type: none;
   text-align: center;
+}
+
+/* Positioning of the inserted registration form */
+.overlayHTML {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+/* Style the input fields */
+.overlayHTML input, .overlayHTML button {
+  font-family: 'Pixelify Sans';
+  text-align: center;
+  background-color: rgba(255,255,255,0);
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+/* Fix credits div to bottom of page */
+.credits {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }

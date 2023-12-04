@@ -1,5 +1,6 @@
 import { MenuScene } from "../menus/mainMenu";
 import { OptionsScene } from "../menus/optionsMenu";
+import { RegisterScene } from "../menus/registerMenu.js";
 import { WinScene } from "../level-complete/level-pass";
 import { LossScene } from "../level-complete/level-fail";
 import { BaseLevel } from "../levels/BaseLevel";
@@ -28,6 +29,7 @@ export const canvasConfiguration = {
   scene: [
     MenuScene,
     OptionsScene,
+    RegisterScene,
     BaseLevel,
     PowerUp,
     Level1,

@@ -3,40 +3,35 @@ import dotenv from 'dotenv';
 dotenv.config();
 // To connect to ElephantSQL using Express
 import express from 'express';
-// To pool database connection using Node-Postgres
-import pkg from 'pg';
-const { Pool } = pkg;
-
-// Database connection pool
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-
+// Create new pool connection for ElephantSQL requests
+import pool from '../database/db-config.js';
 // Initialize express
 const app = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-
-// Test SQL query, access via http://localhost:3000/api/data once express has run
-app.get('/api/data', (req, res) => {
-  pool.query('SELECT * FROM Users')
-      .then(results => {
-          console.log(results.rows); // Log the results to the server console
-          res.status(200).json(results.rows);
-      })
-      .catch(error => {
-          console.error('Error executing query', error.stack);
-          res.status(500).send('Server Error');
-      });
+app.use(express.urlencoded({ extended: true }));
+// Sends SQL query to the ElephantSQL database
+app.post('/api/register', async (req, res) => {
+  // console.log(req.body); // Used to verify information being sent to db
+  try { // Set JSON data into individual variables
+    const { username, email, password } = req.body;
+    // Create new user and return all columns to verify data was inserted
+    const queryText = 'INSERT INTO Users(username, email, password) VALUES($1, $2, $3) RETURNING *';
+    const queryValues = [username, email, password];
+    const dbResponse = await pool.query(queryText, queryValues);
+    // Send success status code with the response from the database server
+    res.status(201).json({ message: 'Registration successful', userId: dbResponse.rows[0] });
+  }
+  catch (error) {
+    console.error('Error in registration', error.message);
+    if (!res.headersSent) {
+      return res.status(500).send('Server error during registration');
+    }
+  }
 });
 
-
-// Start the express server on port 
+// Start the express server on port 3000
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
