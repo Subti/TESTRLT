@@ -45,6 +45,7 @@ export class LossScene extends Phaser.Scene {
         this.registry.set("pointsMultiplier", 1);
         this.registry.set("wordQuantityMultiplier", 1);
         this.registry.set("activePowerUps", []);
+        this.registry.set("revived", false);
         this.scene.start("Level1");
       });
 

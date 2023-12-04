@@ -27,7 +27,6 @@ export class BaseLevel extends Phaser.Scene {
   preload() {
     this.load.image("bg", "assets/images/mainBackground.png");
     this.load.image("platform", "assets/images/platform.png");
-    this.load.image("hearts", "assets/images/heart.png");
     this.load.image("star", "assets/vfx/starParticle.png");
     this.load.audio("ding", "assets/soundEffects/typewriterDing.wav");
     this.load.audio("levelComplete", "assets/soundEffects/levelComplete.wav");
@@ -112,14 +111,6 @@ export class BaseLevel extends Phaser.Scene {
         }
       )
       .setOrigin(0.5, 0.1);
-    // Add container for lives and place in the top left corner of page
-    this.livesContainer = this.add.container(50, 25);
-    // Grabs lives from registry and renders hearts based on remaining lives
-    const livesRemaining = this.registry.get("lives");
-    for (let i = 0; i < livesRemaining; i++) {
-      const hearts = this.add.image(i * 30, 0, "hearts");
-      this.livesContainer.add(hearts);
-    }
     //this is required for the physics engine to work (words can not be added to physics engine without this)
     //it is essentially a group of sprites that can be added to the physics engine and the words follow those sprites
     this.words = this.physics.add.group();
@@ -187,10 +178,6 @@ export class BaseLevel extends Phaser.Scene {
       setTimeout(() => {
         this.player.anims.play("idle");
       }, 1500);
-
-      // Remove the last heart from the container
-      const lastHeart = this.livesContainer.list.pop();
-      lastHeart.destroy();
 
       // Find and destroy the corresponding word text
       const wordIndex = this.activeWords.findIndex(
@@ -440,8 +427,16 @@ export class BaseLevel extends Phaser.Scene {
     }
     // Check for loss condition
     if (this.registry.get("lives") <= 0) {
-      // Transition to loss scene
-      this.scene.start("LossScene");
+      const revive = this.activePowerUps.find(
+        (powerUp) => powerUp.name === "Guardian Angel"
+      );
+
+      if (revive && !this.registry.get("revived")) {
+        revive.effect(this);
+      } else {
+        // Transition to loss scene
+        this.scene.start("LossScene");
+      }
     }
 
     // Check for win condition

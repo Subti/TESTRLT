@@ -93,4 +93,17 @@ export const powerUps = [
       }
     },
   },
+  {
+    name: "Guardian Angel",
+    description:
+      "Upon losing all lives, you are given a second chance starting with 1 life. (This power-up is only active once per game session)",
+    effect: function (scene) {
+      scene.registry.set("lives", 1);
+      scene.time.delayedCall(4000, () => {
+        scene.resumeWords();
+      });
+      scene.registry.set("revived", true);
+      scene.pauseWords();
+    },
+  },
 ];
