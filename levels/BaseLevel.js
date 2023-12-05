@@ -3,11 +3,12 @@ import { submitScore } from "../helper-functions/submitScore.js";
 
 //define game canvas (what it does)
 export class BaseLevel extends Phaser.Scene {
-  constructor(key, wordLength, wordQuantity, fallSpeed, nextSceneKey) {
+  constructor(key, wordConfig, fallSpeed, nextSceneKey) {
     super(key);
     this.levelNumber = this.sys.settings.key.replace("Level", "");
-    this.wordLength = wordLength;
-    this.wordQuantity = wordQuantity;
+    // this.wordLength = wordLength;
+    // this.wordQuantity = wordQuantity;
+    this.wordConfig = wordConfig;
     this.fallSpeed = fallSpeed;
     this.nextSceneKey = nextSceneKey;
     this.player;
@@ -130,24 +131,26 @@ export class BaseLevel extends Phaser.Scene {
     );
 
     //batch call the api to get a bunch of words at once
-    fetch(
-      `https://random-word-api.vercel.app/api?words=${fetchQuantity}&length=${this.wordLength}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        this.calledWords = data;
+    // fetch(
+    //   `https://random-word-api.vercel.app/api?words=${fetchQuantity}&length=${this.wordLength}`
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     this.calledWords = data;
 
-        this.registry.set("loaded", true);
+    //     this.registry.set("loaded", true);
 
-        //Load a word at random intervals of 1-3 seconds
-        this.time.addEvent({
-          delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
-          callback: this.loadWord,
-          callbackScope: this,
-          loop: false,
-          repeat: this.calledWords.length - 1,
-        });
-      });
+    //     //Load a word at random intervals of 1-3 seconds
+    //     this.time.addEvent({
+    //       delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
+    //       callback: this.loadWord,
+    //       callbackScope: this,
+    //       loop: false,
+    //       repeat: this.calledWords.length - 1,
+    //     });
+    //   });
+
+    this.fetchWords();
   }
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
@@ -288,6 +291,43 @@ export class BaseLevel extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
   }
+
+  fetchWords() {
+    // For each word length and quantity, make a fetch request
+    const fetchPromises = this.wordConfig.map(({ length, quantity }) => {
+      const fetchQuantity =
+        quantity * this.registry.get("wordQuantityMultiplier");
+      const url = `https://random-word-api.herokuapp.com/word?number=${fetchQuantity}&length=${length}`;
+
+      return fetch(url)
+        .then((response) => response.json())
+        .then((words) => {
+          // Add the received words to this.calledWords
+          this.calledWords.push(...words);
+        });
+    });
+
+    // Wait for all fetch requests to complete
+    Promise.all(fetchPromises).then(() => {
+      // Shuffle this.calledWords
+      for (let i = this.calledWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.calledWords[i], this.calledWords[j]] = [
+          this.calledWords[j],
+          this.calledWords[i],
+        ];
+      }
+
+      this.registry.set("loaded", true);
+      this.time.addEvent({
+        delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
+        callback: this.loadWord,
+        callbackScope: this,
+        repeat: this.calledWords.length - 1,
+      });
+    });
+  }
+
   // Function to load words from API call
   loadWord() {
     const word = this.calledWords.pop();
@@ -529,8 +569,6 @@ export class BaseLevel extends Phaser.Scene {
         this.scene.start("LossScene");
       }
     }
-
-    console.log(this.levelNumber);
 
     // Check for win condition
     if (
