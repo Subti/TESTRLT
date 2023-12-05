@@ -18,7 +18,7 @@ export function createRegisterForm(scene) {
       handleRegisterSubmit(event, scene);
     }
   });
-  };
+};
 // Prevent the page from refreshing which is default for form submission
 async function handleRegisterSubmit(event, scene) {
   event.preventDefault();
@@ -26,30 +26,30 @@ async function handleRegisterSubmit(event, scene) {
   const data = Object.fromEntries(formData.entries());
 
   try { // Use fetch to send form data to the Express server
-      const response = await fetch('/api/register', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-      });
-      // Wrap the response object in result variable
-      const result = await response.json();
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    // Wrap the response object in result variable
+    const result = await response.json();
 
-      if (response.ok) {
-          // Registration successful
-          console.log(result);
-          showSuccessMessage(scene, result.message); // Display success message
-        } else {
-          // Registration failed
-          showErrorMessage(result.message); // Display error message
-          resetFormFields(); // Reset form fields
-      } // Usual error handling
-    } catch (error) {
-      console.error('Error:', error);
-      showErrorMessage(scene, 'Registration failed');
-      resetFormFields();
-  }  
+    if (response.ok) {
+      // Registration successful
+      console.log(result);
+      showSuccessMessage(scene, result.message); // Display success message
+    } else {
+      // Registration failed
+      showErrorMessage(result.message); // Display error message
+      resetFormFields(); // Reset form fields
+    } // Usual error handling
+  } catch (error) {
+    console.error('Error:', error);
+    showErrorMessage(scene, 'Registration failed');
+    resetFormFields();
+  }
 }
 // Wrap multiple functions in one for intended order of execution
 function showSuccessMessage(scene, message) {
@@ -57,9 +57,9 @@ function showSuccessMessage(scene, message) {
 
   // Wait for 3 seconds, then switch scene
   setTimeout(() => {
-      successText.destroy();
-      removeRegisterForm();
-      switchToMenuScene(scene);
+    successText.destroy();
+    removeRegisterForm();
+    switchToMenuScene(scene);
   }, 3000);
 }
 // Send player back to menu without reloading the page

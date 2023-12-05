@@ -30,6 +30,35 @@ app.post('/api/register', async (req, res) => {
     }
   }
 });
+app.post('/api/leaderboard', async (req, res) => {
+  try {
+    const data  = req.body;
+    const queryValues = data;
+
+
+    const queryText = 'INSERT INTO Scores(score,user_id) VALUES($1,$2) RETURNING *';
+    const dbResponse = await pool.query(queryText,queryValues);
+    res.status(201).json({ message: `Here's the top scores!`, scores: dbResponse.rows[0] });
+
+    
+  } catch (error) {
+    console.error('Error in Post Leaderboard', error.message);
+    
+  }
+})
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const queryText = 'SELECT Users.username, Scores.score FROM Users Join Scores ON Users.id = Scores.user_id ORDER BY score DESC LIMIT 5';
+    // const queryText ='SELECT * FROM Scores'
+    const dbResponse = await pool.query(queryText);
+    res.status(201).json({ message: `Here's the top scores!`, scores: dbResponse.rows });
+
+    
+  } catch (error) {
+    console.error('Error in leaderboard', error.message);
+    
+  }
+})
 
 app.post('/api/login', async (req, res) => {
   try {
@@ -45,7 +74,7 @@ app.post('/api/login', async (req, res) => {
       
       // If password matches
       if (password === user.password) {
-        res.status(200).json({ message: 'Login successful', userId: user.id });
+        res.status(200).json({ message: 'Login successful', userId: user.id});
       } else {
         res.status(401).json({ message: 'Invalid username or password' });
       }
