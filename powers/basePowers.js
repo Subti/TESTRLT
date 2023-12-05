@@ -30,7 +30,7 @@ export const powerUps = [
     },
   },
   {
-    name: " Chunky",
+    name: "Chunky",
     description:
       "Increases the font-size of the words and slows their fall speed by 50% until the end of the game session, but you only gain half the points. Posessing Chunky prevents Phoon from appearing.",
     effect: function (scene) {
@@ -41,7 +41,7 @@ export const powerUps = [
     },
   },
   {
-    name: " Beefy",
+    name: "Beefy",
     description: "Increase life total to 5 and replenish life to full",
     effect: function (scene) {
       scene.registry.set("lives", 5);
@@ -56,7 +56,7 @@ export const powerUps = [
     },
   },
   {
-    name: " Phoon",
+    name: "Phoon",
     description:
       "Decreases the font-size of the words and increases their fall speed by 50% until the end of the game session, but you gain double the points. Posessing Phoon prevents Chunky from appearing.",
     effect: function (scene) {
