@@ -244,7 +244,7 @@ export class BaseLevel extends Phaser.Scene {
         )} | Lives: ${this.registry.get("lives")}`
       );
 
-      this.loseLife.play();
+      this.loseLife.play({ volume: 0.5 });
 
       // Destroy the word sprite
       word.destroy();
