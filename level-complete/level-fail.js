@@ -37,6 +37,16 @@ export class LossScene extends Phaser.Scene {
       .setInteractive()
       .setOrigin(0.5)
       .on("pointerdown", () => {
+        // Get a list of all active scenes
+        const activeScenes = this.scene.manager.getScenes(true);
+
+        // Stop all active scenes
+        for (let scene of activeScenes) {
+          if (scene.scene.key !== "LevelFail") {
+            // Exclude the current scene because then it just bugs out
+            scene.scene.stop();
+          }
+        }
         // Re-initialize lives and points then send player back to level 1
         this.registry.set("points", 0);
         this.registry.set("speedDown", 150);
@@ -44,8 +54,8 @@ export class LossScene extends Phaser.Scene {
         this.registry.set("lives", 3);
         this.registry.set("pointsMultiplier", 1);
         this.registry.set("wordQuantityMultiplier", 1);
-        this.registry.set("activePowerUps", []);
         this.registry.set("revived", false);
+        this.registry.set("activePowerUps", []);
         this.scene.start("Level1");
       });
 

@@ -429,7 +429,7 @@ export class BaseLevel extends Phaser.Scene {
     // Check for loss condition
     if (this.registry.get("lives") <= 0) {
       const revive = this.activePowerUps.find(
-        (powerUp) => powerUp.name === "Guardian Angel"
+        (powerUp) => powerUp.name === "Rebirth"
       );
 
       if (revive && !this.registry.get("revived")) {
@@ -439,6 +439,7 @@ export class BaseLevel extends Phaser.Scene {
         if (this.registry.get("loginID")) {
           submitScore(this.registry.get("points"),this.registry.get("loginID"))
         }
+        this.activeWords = [];
         this.scene.start("LossScene");
       }
     }
@@ -460,7 +461,8 @@ export class BaseLevel extends Phaser.Scene {
       if (
         this.levelNumber % 1 === 0 &&
         this.levelNumber < 7 &&
-        this.activePowerUps.length !== powerUps.length
+        this.activePowerUps.length !== powerUps.length &&
+        !this.scoreAnimation
       ) {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
