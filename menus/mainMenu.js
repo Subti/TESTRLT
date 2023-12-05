@@ -29,7 +29,6 @@ export class MenuScene extends Phaser.Scene {
     if (this.registry.get("loginStatus") === undefined) {
       this.registry.set("loginStatus", false);
     }
-    this.add.image(600, 300, "bg");
 
     const gameTitle = "Project RLT";
     let startX = 350; // X position needs to be mutable, the value gets redefined in the forEach method below
