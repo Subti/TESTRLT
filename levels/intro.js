@@ -30,5 +30,12 @@ export class IntroScene extends Phaser.Scene {
       fill: "#000",
       wordWrap: { width: card.width - 20 }
     });
+    const backButton = this.add
+    .text(1100, 530, "Start Game", { fontSize: "24px", fontFamily: "Pixelify Sans", fill: "white" })
+    .setOrigin(0.5, 0.5)
+    .setInteractive()
+    .on("pointerdown", () => {
+      this.scene.start("Level1");
+    });
   }
 };
