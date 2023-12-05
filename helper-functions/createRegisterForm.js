@@ -58,7 +58,7 @@ function showSuccessMessage(scene, message) {
   // Wait for 3 seconds, then switch scene
   setTimeout(() => {
     successText.destroy();
-    removeRegisterForm();
+    removeRegisterForm(scene);
     switchToMenuScene(scene);
   }, 3000);
 }
@@ -73,14 +73,14 @@ function resetFormFields() {
   document.getElementById('password').value = '';
 }
 // Fields stayed after sending player back to menu, scene removes the elements
-function removeRegisterForm() {
+function removeRegisterForm(scene) {
   const formDiv = document.querySelector('.overlayHTML');
   if (formDiv) {
     formDiv.remove();
   }
   // Fade in menu buttons after falling letters animation
-  this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
-    this.tweens.add({
+  scene.time.delayedCall(2100 + 1000, () => {
+    scene.tweens.add({
       targets: [registerButton, loginButton],
       alpha: 1,
       duration: 1000,
