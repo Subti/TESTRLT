@@ -17,6 +17,7 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("wordQuantityMultiplier", 1);
     this.registry.set("revived", false);
     this.registry.set("activePowerUps", []);
+    this.registry.set("winSceneCount", 0);
     this.add.image(600, 300, "bg");
     this.sound.play("mainMenu", { loop: true, volume: 0.2 });
     this.events.on("shutdown", () => {
@@ -190,7 +191,7 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive()
       .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
+      .on("pointerdown", () => this.scene.start("Level4")); // Start GameScene when the start button is clicked
     // Breate animation for the start button
     const startButtonTween = this.tweens.add({
       targets: startButton,
@@ -250,37 +251,37 @@ export class MenuScene extends Phaser.Scene {
     // Leaderboard button takes user to options menu
 
     const leaderboardButton = this.add
-    .text(600, 350, "Leaderboard", {
-      fontSize: "32px",
-      fontFamily: "Pixelify Sans",
-      fill: "#fff",
-    })
-    .setInteractive()
-    .setOrigin(0.5)
-    .setAlpha(0)
-    .on("pointerdown", () => this.scene.start("scene-leaderboard"));
+      .text(600, 350, "Leaderboard", {
+        fontSize: "32px",
+        fontFamily: "Pixelify Sans",
+        fill: "#fff",
+      })
+      .setInteractive()
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .on("pointerdown", () => this.scene.start("scene-leaderboard"));
 
-  const leaderboardButtonTween = this.tweens.add({
-    targets: leaderboardButton,
-    scaleX: 1.3,
-    scaleY: 1.3,
-    ease: "Sine.easeInOut",
-    duration: 500,
-    alpha: 0.5,
-    yoyo: true,
-    repeat: -1,
-    paused: true,
-  });
+    const leaderboardButtonTween = this.tweens.add({
+      targets: leaderboardButton,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      ease: "Sine.easeInOut",
+      duration: 500,
+      alpha: 0.5,
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
 
-  leaderboardButton.on("pointerover", () => {
-    leaderboardButtonTween.resume();
-  });
+    leaderboardButton.on("pointerover", () => {
+      leaderboardButtonTween.resume();
+    });
 
-  leaderboardButton.on("pointerout", () => {
-    leaderboardButtonTween.restart();
-    leaderboardButtonTween.pause();
-    leaderboardButton.setAlpha(1);
-  });
+    leaderboardButton.on("pointerout", () => {
+      leaderboardButtonTween.restart();
+      leaderboardButtonTween.pause();
+      leaderboardButton.setAlpha(1);
+    });
 
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {

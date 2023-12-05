@@ -41,57 +41,57 @@ export class BaseLevel extends Phaser.Scene {
       },
       4: {
         bg: "assets/images/plains.png",
-        track: "assets/music/intermediateLevels.wav",
+        track: "assets/music/plains.wav",
       },
       5: {
         bg: "assets/images/plains.png",
-        track: "assets/music/intermediateLevels.wav",
+        track: "assets/music/plains.wav",
       },
       6: {
         bg: "assets/images/plains.png",
-        track: "assets/music/intermediateLevels.wav",
+        track: "assets/music/plains.wav",
       },
       7: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/mid.wav",
       },
       8: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/mid.wav",
       },
       9: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/mid.wav",
       },
       10: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/underwater.wav",
       },
       11: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/underwater.wav",
       },
       12: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/underwater.wav",
       },
       13: {
         bg: "assets/images/hell.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/endgame.wav",
       },
       14: {
         bg: "assets/images/hell.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/endgame.wav",
       },
       15: {
         bg: "assets/images/hell.png",
-        track: "assets/music/advancedLevels.wav",
+        track: "assets/music/endgame.wav",
       },
     };
     const bgImage = levelSets[this.levelNumber].bg;
     const track = levelSets[this.levelNumber].track;
-    this.load.image("bg", bgImage);
-    this.load.audio("track", track);
+    this.load.image(`bg${this.levelNumber}`, bgImage);
+    this.load.audio(`track${this.levelNumber}`, track);
     this.load.image("platform", "assets/images/platform.png");
     this.load.image("star", "assets/vfx/starParticle.png");
     this.load.audio("ding", "assets/soundEffects/typewriterDing.wav");
@@ -152,9 +152,9 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    this.sound.play("track", { loop: true, volume: 0.2 });
+    this.sound.play(`track${this.levelNumber}`, { loop: true, volume: 0.2 });
     this.events.on("shutdown", () => {
-      this.sound.removeByKey("track");
+      this.sound.removeByKey(`track${this.levelNumber}`);
     });
 
     this.typeSound = this.sound.add("type");
@@ -165,7 +165,11 @@ export class BaseLevel extends Phaser.Scene {
     this.currentWord = "";
 
     //add background image
-    this.add.image(600, 300, "bg"); //.setOrigin(0, 0);
+    this.bgImage = this.add
+      .image(0, 0, `bg${this.levelNumber}`)
+      .setOrigin(0, 0);
+    this.bgImage.displayWidth = this.sys.game.config.width;
+    this.bgImage.displayHeight = this.sys.game.config.height;
 
     // Add level + score + lives info in the top center of game canvas
     this.playerStats = this.add
@@ -513,12 +517,17 @@ export class BaseLevel extends Phaser.Scene {
       } else {
         // Transition to loss scene
         if (this.registry.get("loginID")) {
-          submitScore(this.registry.get("points"),this.registry.get("loginID"))
+          submitScore(
+            this.registry.get("points"),
+            this.registry.get("loginID")
+          );
         }
         this.activeWords = [];
         this.scene.start("LossScene");
       }
     }
+
+    console.log(this.levelNumber);
 
     // Check for win condition
     if (
@@ -535,8 +544,8 @@ export class BaseLevel extends Phaser.Scene {
       );
 
       if (
-        this.levelNumber % 1 === 0 &&
-        this.levelNumber < 7 &&
+        this.levelNumber % 3 === 0 &&
+        this.levelNumber < 15 &&
         this.activePowerUps.length !== powerUps.length &&
         !this.scoreAnimation
       ) {
@@ -544,9 +553,14 @@ export class BaseLevel extends Phaser.Scene {
       } else {
         // Transition to win scene
         if (this.registry.get("loginID")) {
-          submitScore(this.registry.get("points"),this.registry.get("loginID"))
+          submitScore(
+            this.registry.get("points"),
+            this.registry.get("loginID")
+          );
         }
-        this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+        if (!this.scoreAnimation) {
+          this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+        }
       }
     }
   }

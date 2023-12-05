@@ -2,6 +2,6 @@ import { BaseLevel } from "./BaseLevel";
 
 export class Level6 extends BaseLevel {
   constructor() {
-    super("Level6", 5, 25, 100, "Level7");
+    super("Level6", 3, 5, 30, "Level7");
   }
 }
