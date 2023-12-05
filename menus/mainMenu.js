@@ -30,8 +30,8 @@ export class MenuScene extends Phaser.Scene {
       this.registry.set("loginStatus", false);
     }
 
-    const gameTitle = "Project RLT";
-    let startX = 350; // X position needs to be mutable, the value gets redefined in the forEach method below
+    const gameTitle = "KEYBOARD WARRIOR";
+    let startX = 200; // X position needs to be mutable, the value gets redefined in the forEach method below
 
     // Container to hold all letters
     const fallingLetters = this.add.group();
@@ -51,7 +51,7 @@ export class MenuScene extends Phaser.Scene {
       fallingLetters.add(letterText);
 
       // Adjust startX for the next letter
-      startX += letterText.width;
+      startX += 50;
 
       // Animate each letter falling into place
       this.tweens.add({
