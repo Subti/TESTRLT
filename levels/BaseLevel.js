@@ -321,7 +321,10 @@ export class BaseLevel extends Phaser.Scene {
 
     const text = this.add.text(10, 10, word, {
       fontSize: chunky ? "64px" : phoon ? "16px" : "32px",
-      fill: "#000000",
+      fontFamily: "Pixelify Sans",
+      stroke: "#000000",
+      strokeThickness: 2,
+      fill: "#ffffff",
     });
 
     const wordTimer = this.time.now;
