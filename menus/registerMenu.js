@@ -14,5 +14,17 @@ export class RegisterScene extends Phaser.Scene {
     this.add.image(600, 300, "bg");
     // Pass scene into function using 'this'
     createRegisterForm(this);
+    const backButton = this.add
+    .text(110, 30, "Back to Menu", { fontSize: "24px", fontFamily: "Pixelify Sans", fill: "white" })
+    .setOrigin(0.5, 0.5)
+    .setInteractive()
+    .on("pointerdown", () => {
+      const formDiv = document.querySelector('.overlayHTML');
+      if (formDiv) {
+        formDiv.remove();
+      }
+      this.scene.start("scene-menu");
+    });
+
   }
 };

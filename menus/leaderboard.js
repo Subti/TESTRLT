@@ -25,6 +25,5 @@ export class LeaderboardScene extends Phaser.Scene {
         }
         this.scene.start("scene-menu");
       });
-
   }
 };
