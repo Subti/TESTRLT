@@ -290,6 +290,40 @@ export class BaseLevel extends Phaser.Scene {
     });
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+    let demoCheatButton = this.add.text(
+      this.width - 100,
+      this.height - 20,
+      "Demo Cheat",
+      {
+        fontSize: "16px",
+        fontFamily: "Pixelify Sans",
+        fill: "#000000",
+      }
+    );
+
+    demoCheatButton.setInteractive();
+    demoCheatButton.on("pointerdown", () => {
+      if (
+        this.levelNumber % 3 === 0 &&
+        this.levelNumber < 15 &&
+        this.activePowerUps.length !== powerUps.length &&
+        !this.scoreAnimation
+      ) {
+        this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
+      } else {
+        // Transition to win scene
+        if (this.registry.get("loginID")) {
+          submitScore(
+            this.registry.get("points"),
+            this.registry.get("loginID")
+          );
+        }
+        if (!this.scoreAnimation) {
+          this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
+        }
+      }
+    });
   }
 
   fetchWords() {
