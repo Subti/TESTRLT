@@ -28,6 +28,7 @@ export class MenuScene extends Phaser.Scene {
     // Check if user loginStatus was set, if not then set to false
     if (this.registry.get("loginStatus") === undefined) {
       this.registry.set("loginStatus", false);
+      console.log(this.registry.get("loginStatus"));
     }
     this.add.image(600, 300, "bg");
 
