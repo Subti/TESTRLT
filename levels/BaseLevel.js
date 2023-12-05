@@ -25,7 +25,72 @@ export class BaseLevel extends Phaser.Scene {
 
   //preload assets, anything that needs to be loaded before the game starts (images, sprites, etc)
   preload() {
-    this.load.image("bg", "assets/images/mainBackground.png");
+    const levelSets = {
+      1: {
+        bg: "assets/images/mainBackground.png",
+        track: "assets/music/beginnerLevels.mp3",
+      },
+      2: {
+        bg: "assets/images/mainBackground.png",
+        track: "assets/music/beginnerLevels.mp3",
+      },
+      3: {
+        bg: "assets/images/mainBackground.png",
+        track: "assets/music/beginnerLevels.mp3",
+      },
+      4: {
+        bg: "assets/images/plains.png",
+        track: "assets/music/intermediateLevels.wav",
+      },
+      5: {
+        bg: "assets/images/plains.png",
+        track: "assets/music/intermediateLevels.wav",
+      },
+      6: {
+        bg: "assets/images/plains.png",
+        track: "assets/music/intermediateLevels.wav",
+      },
+      7: {
+        bg: "assets/images/celestial.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      8: {
+        bg: "assets/images/celestial.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      9: {
+        bg: "assets/images/celestial.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      10: {
+        bg: "assets/images/underwater.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      11: {
+        bg: "assets/images/underwater.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      12: {
+        bg: "assets/images/underwater.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      13: {
+        bg: "assets/images/hell.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      14: {
+        bg: "assets/images/hell.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+      15: {
+        bg: "assets/images/hell.png",
+        track: "assets/music/advancedLevels.wav",
+      },
+    };
+    const bgImage = levelSets[this.levelNumber].bg;
+    const track = levelSets[this.levelNumber].track;
+    this.load.image("bg", bgImage);
+    this.load.audio("track", track);
     this.load.image("platform", "assets/images/platform.png");
     this.load.image("star", "assets/vfx/starParticle.png");
     this.load.audio("ding", "assets/soundEffects/typewriterDing.wav");
@@ -86,6 +151,11 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
+    this.sound.play("track", { loop: true, volume: 0.2 });
+    this.events.on("shutdown", () => {
+      this.sound.removeByKey("track");
+    });
+
     this.typeSound = this.sound.add("type");
     this.dingMusic = this.sound.add("ding");
     this.levelComplete = this.sound.add("levelComplete");
@@ -357,6 +427,12 @@ export class BaseLevel extends Phaser.Scene {
   }
 
   updateScore(amount) {
+    // If there are no active words, instantly update the score
+    if (this.activeWords.length <= 1) {
+      this.registry.set("points", this.registry.get("points") + amount);
+      return;
+    }
+
     // If a score update is already in progress, add the new score to the target score
     if (this.scoreAnimation) {
       this.targetScore += amount;

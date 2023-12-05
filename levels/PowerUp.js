@@ -12,9 +12,14 @@ export class PowerUp extends Phaser.Scene {
 
   preload() {
     this.load.image("powerbg", "assets/images/Summer3.png");
+    this.load.audio("upgrade", "assets/music/upgrade.wav");
   }
 
   create() {
+    this.sound.play("upgrade", { loop: true, volume: 0.2 });
+    this.events.on("shutdown", () => {
+      this.sound.removeByKey("upgrade");
+    });
     this.add.image(0, 0, "powerbg").setOrigin(0, 0);
 
     // Get the active power-ups from the registry
@@ -63,7 +68,6 @@ export class PowerUp extends Phaser.Scene {
       const nameText = this.add.text(card.x - 50, card.y - 100, powerUp.name, {
         fontSize: "20px",
         fill: "#000",
-
       });
 
       const descriptionText = this.add.text(
@@ -74,7 +78,6 @@ export class PowerUp extends Phaser.Scene {
           fontSize: "16px",
           fill: "#000",
           wordWrap: { width: card.width - 20 }, // Subtract a small amount to add some padding
-          
         }
       );
 

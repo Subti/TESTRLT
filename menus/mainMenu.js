@@ -5,6 +5,7 @@ export class MenuScene extends Phaser.Scene {
 
   preload() {
     this.load.image("bg", "assets/images/mainBackground.png");
+    this.load.audio("mainMenu", "assets/music/mainMenu.wav");
   }
 
   create() {
@@ -17,6 +18,10 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("revived", false);
     this.registry.set("activePowerUps", []);
     this.add.image(600, 300, "bg");
+    this.sound.play("mainMenu", { loop: true, volume: 0.2 });
+    this.events.on("shutdown", () => {
+      this.sound.removeByKey("mainMenu");
+    });
     // Check if user loginStatus was set, if not then set to false
     if (this.registry.get("loginStatus") === undefined) {
       this.registry.set("loginStatus", false);
@@ -54,7 +59,38 @@ export class MenuScene extends Phaser.Scene {
         delay: index * 100, // Stagger the start of each letter's animation
       });
       // Define colour array to cycle through
-      const colors = ["#FF0000", "#800000", "#FFC0CB", "#DC143C", "#B22222", "#FFA500", "#FFD700", "#FFFF00", "#FF4500", "#DAA520", "#008000", "#00FF00", "#228B22", "#32CD32", "#90EE90", "#0000FF", "#000080", "#87CEEB", "#1E90FF", "#4169E1", "#800080", "#EE82EE", "#8A2BE2", "#9400D3", "#9932CC", "#FF69B4", "#C71585", "#FF00FF", "#DB7093", "#FF1493"];
+      const colors = [
+        "#FF0000",
+        "#800000",
+        "#FFC0CB",
+        "#DC143C",
+        "#B22222",
+        "#FFA500",
+        "#FFD700",
+        "#FFFF00",
+        "#FF4500",
+        "#DAA520",
+        "#008000",
+        "#00FF00",
+        "#228B22",
+        "#32CD32",
+        "#90EE90",
+        "#0000FF",
+        "#000080",
+        "#87CEEB",
+        "#1E90FF",
+        "#4169E1",
+        "#800080",
+        "#EE82EE",
+        "#8A2BE2",
+        "#9400D3",
+        "#9932CC",
+        "#FF69B4",
+        "#C71585",
+        "#FF00FF",
+        "#DB7093",
+        "#FF1493",
+      ];
       let currentColor = 0;
       this.time.addEvent({
         delay: 1000,
