@@ -13,6 +13,7 @@ export class PowerUp extends Phaser.Scene {
   preload() {
     this.load.image("powerbg", "assets/images/Summer3.png");
     this.load.audio("upgrade", "assets/music/upgrade.wav");
+    this.registry.set("winSceneCount", this.registry.get("winSceneCount") + 1);
   }
 
   create() {

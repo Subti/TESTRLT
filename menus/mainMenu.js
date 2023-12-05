@@ -17,7 +17,7 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("wordQuantityMultiplier", 1);
     this.registry.set("revived", false);
     this.registry.set("activePowerUps", []);
-    this.registry.set("winSceneCount", 0);
+    this.registry.set("winSceneCount", 1);
     this.add.image(600, 300, "bg");
     this.sound.play("mainMenu", { loop: true, volume: 0.2 });
     this.events.on("shutdown", () => {
@@ -191,7 +191,7 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive()
       .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("Level4")); // Start GameScene when the start button is clicked
+      .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
     // Breate animation for the start button
     const startButtonTween = this.tweens.add({
       targets: startButton,
