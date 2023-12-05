@@ -72,10 +72,19 @@ function resetFormFields() {
   document.getElementById('email').value = '';
   document.getElementById('password').value = '';
 }
-// Fields stayed after sending player back to menu, this removes the elements
+// Fields stayed after sending player back to menu, scene removes the elements
 function removeRegisterForm() {
   const formDiv = document.querySelector('.overlayHTML');
   if (formDiv) {
     formDiv.remove();
   }
+  // Fade in menu buttons after falling letters animation
+  this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
+    this.tweens.add({
+      targets: [registerButton, loginButton],
+      alpha: 1,
+      duration: 1000,
+      ease: "Power1",
+    });
+  });
 }

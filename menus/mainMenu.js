@@ -1,3 +1,5 @@
+import { createLoginRegisterBtn } from "../helper-functions/createLogReg.js";
+
 export class MenuScene extends Phaser.Scene {
   constructor() {
     super("scene-menu");
@@ -27,6 +29,7 @@ export class MenuScene extends Phaser.Scene {
     if (this.registry.get("loginStatus") === undefined) {
       this.registry.set("loginStatus", false);
     }
+    this.add.image(600, 300, "bg");
 
     const gameTitle = "Project RLT";
     let startX = 350; // X position needs to be mutable, the value gets redefined in the forEach method below
@@ -110,80 +113,16 @@ export class MenuScene extends Phaser.Scene {
         scaleX: 0.5,
         scaleY: 0.5,
         x: "+=0",
-        y: 150,
+        y: 125,
         duration: 1000,
         ease: "Power1",
       });
     });
-    // Sends player to login
-    const loginButton = this.add
-      .text(600, 250, "Login", {
-        fontSize: "32px",
-        fontFamily: "Pixelify Sans",
-        fill: "#fff",
-      })
-      .setInteractive()
-      .setOrigin(0.5)
-      .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("LoginScene"));
 
-    const loginButtonTween = this.tweens.add({
-      targets: loginButton,
-      scaleX: 1.3,
-      scaleY: 1.3,
-      ease: "Sine.easeInOut",
-      duration: 500,
-      alpha: 0.5,
-      yoyo: true,
-      repeat: -1,
-      paused: true,
-    });
-
-    loginButton.on("pointerover", () => {
-      loginButtonTween.resume();
-    });
-
-    loginButton.on("pointerout", () => {
-      loginButtonTween.restart();
-      loginButtonTween.pause();
-      loginButton.setAlpha(1);
-    });
-    // Sends player to registration
-    const registerButton = this.add
-      .text(600, 200, "Register", {
-        fontSize: "32px",
-        fontFamily: "Pixelify Sans",
-        fill: "#fff",
-      })
-      .setInteractive()
-      .setOrigin(0.5)
-      .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("RegisterScene"));
-
-    const registerButtonTween = this.tweens.add({
-      targets: registerButton,
-      scaleX: 1.3,
-      scaleY: 1.3,
-      ease: "Sine.easeInOut",
-      duration: 500,
-      alpha: 0.5,
-      yoyo: true,
-      repeat: -1,
-      paused: true,
-    });
-
-    registerButton.on("pointerover", () => {
-      registerButtonTween.resume();
-    });
-
-    registerButton.on("pointerout", () => {
-      registerButtonTween.restart();
-      registerButtonTween.pause();
-      registerButton.setAlpha(1);
-    });
+    const startYposition = this.registry.get("loginStatus") === false ? 300 : 250;
     // Starts game when clicked
     const startButton = this.add
-      .text(600, 300, "Start Game", {
+      .text(600, startYposition, "Start Game", {
         fontSize: "32px",
         fontFamily: "Pixelify Sans",
         fill: "#fff",
@@ -286,13 +225,14 @@ export class MenuScene extends Phaser.Scene {
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
       this.tweens.add({
-        targets: [startButton, leaderboardButton, registerButton, loginButton],
+        targets: [startButton, leaderboardButton],
         alpha: 1,
         duration: 1000,
         ease: "Power1",
       });
     });
 
+    createLoginRegisterBtn(this);
     // For quick test/debug access to other menus
     // this.add.text(0,0,"test game over scene", {fontSize: "16px", fill: "#000000"})
     // .setInteractive()
