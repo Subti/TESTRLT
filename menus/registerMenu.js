@@ -25,6 +25,5 @@ export class RegisterScene extends Phaser.Scene {
       }
       this.scene.start("scene-menu");
     });
-
   }
 };

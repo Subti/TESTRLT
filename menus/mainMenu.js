@@ -130,7 +130,7 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive()
       .setAlpha(0)
-      .on("pointerdown", () => this.scene.start("Level1")); // Start GameScene when the start button is clicked
+      .on("pointerdown", () => this.scene.start("IntroScene")); // Start GameScene when the start button is clicked
     // Breate animation for the start button
     const startButtonTween = this.tweens.add({
       targets: startButton,

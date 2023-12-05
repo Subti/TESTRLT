@@ -7,6 +7,7 @@ import { LossScene } from "../level-complete/level-fail";
 import { BaseLevel } from "../levels/BaseLevel";
 import { PowerUp } from "../levels/PowerUp.js";
 import { LeaderboardScene } from "../menus/leaderboard.js";
+import { IntroScene } from "../levels/intro.js";
 import { Level1 } from "../levels/Level1";
 import { Level2 } from "../levels/Level2";
 import { Level3 } from "../levels/Level3";
@@ -42,6 +43,7 @@ export const canvasConfiguration = {
     RegisterScene,
     LoginScene,
     LeaderboardScene,
+    IntroScene,
     BaseLevel,
     PowerUp,
     Level1,
