@@ -17,7 +17,7 @@ export class PowerUp extends Phaser.Scene {
   }
 
   create() {
-    this.sound.play("upgrade", { loop: true, volume: 0.2 });
+    this.sound.play("upgrade", { loop: true, volume: 0.1 });
     this.events.on("shutdown", () => {
       this.sound.removeByKey("upgrade");
     });

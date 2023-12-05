@@ -155,7 +155,7 @@ export class BaseLevel extends Phaser.Scene {
 
   //create assets, anything that needs to be added/loaded to the game world (images, sprites, etc), as well as initial game logic and physics
   create() {
-    this.sound.play(`track${this.levelNumber}`, { loop: true, volume: 0.2 });
+    this.sound.play(`track${this.levelNumber}`, { loop: true, volume: 0.1 });
     this.events.on("shutdown", () => {
       this.sound.removeByKey(`track${this.levelNumber}`);
     });
@@ -244,7 +244,7 @@ export class BaseLevel extends Phaser.Scene {
         )} | Lives: ${this.registry.get("lives")}`
       );
 
-      this.loseLife.play({ volume: 0.5 });
+      this.loseLife.play({ volume: 0.1 });
 
       // Destroy the word sprite
       word.destroy();
@@ -361,7 +361,6 @@ export class BaseLevel extends Phaser.Scene {
 
     const text = this.add.text(10, 10, word, {
       fontSize: chunky ? "64px" : phoon ? "16px" : "32px",
-      fontFamily: "Pixelify Sans",
       stroke: "#000000",
       strokeThickness: 2,
       fill: "#ffffff",
