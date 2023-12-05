@@ -209,8 +209,11 @@ export class BaseLevel extends Phaser.Scene {
     this.input.keyboard.on("keydown", (event) => {
       this.typeSound.play();
       if (event.key === "Backspace") {
-        this.currentWord = "";
-      } else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
+        this.currentWord = this.currentWord.slice(0,-1);
+      } else if (event.code === "Space") {
+        this.currentWord = ''
+      }
+      else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
         this.currentWord += event.key;
       }
 
