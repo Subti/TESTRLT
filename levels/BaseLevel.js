@@ -1,4 +1,5 @@
 import { powerUps } from "../powers/basePowers.js";
+import { submitScore } from "../helper-functions/submitScore.js";
 
 //define game canvas (what it does)
 export class BaseLevel extends Phaser.Scene {
@@ -435,6 +436,9 @@ export class BaseLevel extends Phaser.Scene {
         revive.effect(this);
       } else {
         // Transition to loss scene
+        if (this.registry.get("loginID")) {
+          submitScore(this.registry.get("points"),this.registry.get("loginID"))
+        }
         this.scene.start("LossScene");
       }
     }
@@ -461,6 +465,9 @@ export class BaseLevel extends Phaser.Scene {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
         // Transition to win scene
+        if (this.registry.get("loginID")) {
+          submitScore(this.registry.get("points"),this.registry.get("loginID"))
+        }
         this.scene.start("WinScene", { nextSceneKey: this.nextSceneKey });
       }
     }

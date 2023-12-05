@@ -34,6 +34,9 @@ async function handleLoginSubmit(event, scene) {
           console.log(result);
           showSuccessMessage(scene, result.message);
           scene.registry.set("loginStatus", true);
+          scene.registry.set("loginID", result.userId);
+          console.log("IN HERE" +scene.registry.get("loginID" ));
+
       } else {
           showErrorMessage(result.message);
           resetFormFields();

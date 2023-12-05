@@ -211,10 +211,45 @@ export class MenuScene extends Phaser.Scene {
       optionsButton.setAlpha(1);
     });
 
+    // Leaderboard button takes user to options menu
+
+    const leaderboardButton = this.add
+    .text(600, 350, "Leaderboard", {
+      fontSize: "32px",
+      fontFamily: "Pixelify Sans",
+      fill: "#fff",
+    })
+    .setInteractive()
+    .setOrigin(0.5)
+    .setAlpha(0)
+    .on("pointerdown", () => this.scene.start("scene-leaderboard"));
+
+  const leaderboardButtonTween = this.tweens.add({
+    targets: leaderboardButton,
+    scaleX: 1.3,
+    scaleY: 1.3,
+    ease: "Sine.easeInOut",
+    duration: 500,
+    alpha: 0.5,
+    yoyo: true,
+    repeat: -1,
+    paused: true,
+  });
+
+  leaderboardButton.on("pointerover", () => {
+    leaderboardButtonTween.resume();
+  });
+
+  leaderboardButton.on("pointerout", () => {
+    leaderboardButtonTween.restart();
+    leaderboardButtonTween.pause();
+    leaderboardButton.setAlpha(1);
+  });
+
     // Fade in menu buttons after falling letters animation
     this.time.delayedCall(gameTitle.length * 100 + 1000, () => {
       this.tweens.add({
-        targets: [startButton, optionsButton, registerButton, loginButton],
+        targets: [startButton, leaderboardButton, registerButton, loginButton],
         alpha: 1,
         duration: 1000,
         ease: "Power1",

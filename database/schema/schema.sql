@@ -1,10 +1,11 @@
 -- Create the Users table (Referenced by other tables)
+DROP TABLE IF EXISTS Users CASCADE;
+
 CREATE TABLE Users (
-  user_id SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  score INT DEFAULT 0,
   lives INT DEFAULT 3,
   highest_level_completed INT DEFAULT 0,
   account_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -12,13 +13,23 @@ CREATE TABLE Users (
   display_height INT DEFAULT 600
 );
 
+DROP TABLE IF EXISTS Scores CASCADE;
+CREATE TABLE Scores (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES Users(id) ON DELETE CASCADE,
+  score BIGINT
+);
+
 -- Create the Levels table
+
+DROP TABLE IF EXISTS Levels CASCADE;
 CREATE TABLE Levels (
   level_id SERIAL PRIMARY KEY,
   level_name VARCHAR(255) NOT NULL
 );
 
 -- Create the Difficulty table
+DROP TABLE IF EXISTS Difficulty CASCADE;
 CREATE TABLE Difficulty (
   difficulty_id SERIAL PRIMARY KEY,
   difficulty_level VARCHAR(50) DEFAULT 'Normal',
@@ -27,11 +38,11 @@ CREATE TABLE Difficulty (
 );
 
 -- Create the User_Level_Attempts table
+DROP TABLE IF EXISTS User_Level_Attempts CASCADE;
 CREATE TABLE User_Level_Attempts (
   attempt_id SERIAL PRIMARY KEY,
-  user_id INT NOT NULL,
   level_id INT NOT NULL,
   number_of_attempts INT DEFAULT 0,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+  user_id INT REFERENCES Users(id) ON DELETE CASCADE,
   FOREIGN KEY (level_id) REFERENCES Levels(level_id) ON DELETE CASCADE
 );

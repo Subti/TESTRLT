@@ -1,9 +1,9 @@
-import { createRegisterForm } from "../helper-functions/createRegisterForm";
+import { displayLeaderBoard } from "../helper-functions/getLeaderboard";
 
 export class LeaderboardScene extends Phaser.Scene {
 
   constructor() {
-    super('LeaderboardScene');
+    super('scene-leaderboard');
   }
 
   preload() {
@@ -13,7 +13,7 @@ export class LeaderboardScene extends Phaser.Scene {
   create() {
     this.add.image(600, 300, "bg");
     // Pass scene into function using 'this'
-    createRegisterForm(this);
+    displayLeaderBoard(this);
   }
 };
 
