@@ -173,22 +173,26 @@ export class BaseLevel extends Phaser.Scene {
       .setOrigin(0, 0);
     this.bgImage.displayWidth = this.sys.game.config.width;
     this.bgImage.displayHeight = this.sys.game.config.height;
-
+    // Graphic added for better visibility on playerStats
+    this.add.graphics()
+      .fillStyle(0xffffff, 0.75)
+      .fillRect(360, 10, 470, 32);
+    
     // Add level + score + lives info in the top center of game canvas
     this.playerStats = this.add
-      .text(
-        this.width / 2,
-        10,
-        `Level: ${this.levelNumber} | Score: ${this.registry.get(
-          "points"
+    .text(
+      this.width / 2,
+      10,
+      `Level: ${this.levelNumber} | Score: ${this.registry.get(
+        "points"
         )} | Lives: ${this.registry.get("lives")}`,
         {
           fontSize: "32px",
           fontFamily: "Pixelify Sans",
           fill: "#000000",
         }
-      )
-      .setOrigin(0.5, 0.1);
+        )
+        .setOrigin(0.5, 0.1);
     //this is required for the physics engine to work (words can not be added to physics engine without this)
     //it is essentially a group of sprites that can be added to the physics engine and the words follow those sprites
     this.words = this.physics.add.group();
@@ -511,8 +515,7 @@ export class BaseLevel extends Phaser.Scene {
 
         // Update the score text
         this.playerStats.setText(
-          `Level: ${
-            this.levelNumber
+          `Level: ${this.levelNumber
           } | Score: ${newScore} | Lives: ${this.registry.get("lives")}`
         );
 
@@ -520,8 +523,7 @@ export class BaseLevel extends Phaser.Scene {
         if (newScore >= this.targetScore) {
           this.registry.set("points", this.targetScore);
           this.playerStats.setText(
-            `Level: ${this.levelNumber} | Score: ${
-              this.targetScore
+            `Level: ${this.levelNumber} | Score: ${this.targetScore
             } | Lives: ${this.registry.get("lives")}`
           );
           this.scoreAnimation.remove(false);
