@@ -118,7 +118,8 @@ export class MenuScene extends Phaser.Scene {
       });
     });
 
-    const startYposition = this.registry.get("loginStatus") === false ? 300 : 250;
+    const startYposition =
+      this.registry.get("loginStatus") === false ? 300 : 250;
     // Starts game when clicked
     const startButton = this.add
       .text(600, startYposition, "Start Game", {

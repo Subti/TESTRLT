@@ -3,81 +3,64 @@ export class WinScene extends Phaser.Scene {
     super("WinScene");
   }
 
+  init(data) {
+    this.nextSceneKey = data.nextSceneKey;
+    this.winNumber = data.levelNumber;
+  }
+
   preload() {
     const levelSets = {
       1: {
         bg: "assets/images/mainBackground.png",
-        track: "assets/music/beginnerLevels.mp3",
       },
       2: {
         bg: "assets/images/mainBackground.png",
-        track: "assets/music/beginnerLevels.mp3",
       },
       3: {
         bg: "assets/images/mainBackground.png",
-        track: "assets/music/beginnerLevels.mp3",
       },
       4: {
         bg: "assets/images/plains.png",
-        track: "assets/music/plains.wav",
       },
       5: {
         bg: "assets/images/plains.png",
-        track: "assets/music/plains.wav",
       },
       6: {
         bg: "assets/images/plains.png",
-        track: "assets/music/plains.wav",
       },
       7: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/mid.wav",
       },
       8: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/mid.wav",
       },
       9: {
         bg: "assets/images/celestial.png",
-        track: "assets/music/mid.wav",
       },
       10: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/underwater.wav",
       },
       11: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/underwater.wav",
       },
       12: {
         bg: "assets/images/underwater.png",
-        track: "assets/music/underwater.wav",
       },
       13: {
         bg: "assets/images/hell.png",
-        track: "assets/music/endgame.wav",
       },
       14: {
         bg: "assets/images/hell.png",
-        track: "assets/music/endgame.wav",
       },
       15: {
         bg: "assets/images/hell.png",
-        track: "assets/music/endgame.wav",
       },
     };
-    this.registry.set("winSceneCount", this.registry.get("winSceneCount") + 1);
-    this.winNumber = this.registry.get("winSceneCount");
     const bgImage = levelSets[this.winNumber].bg;
     this.load.image(`bg${this.winNumber}`, bgImage);
     this.load.spritesheet("fireworks", "assets/vfx/HolyExplosion_96x96.png", {
       frameWidth: 96,
     });
-  }
-
-  init(data) {
-    // Store the next level's key
-    this.nextSceneKey = data.nextSceneKey;
   }
 
   create() {
