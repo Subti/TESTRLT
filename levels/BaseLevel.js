@@ -347,19 +347,24 @@ export class BaseLevel extends Phaser.Scene {
   }
   wordFilter(words, wordQuantity, wordLength) {
     let filteredWords = words.filter((word) => {
+
+      //use imported package to check for profanity, if a word does contain profanity, it gets filtered out
       if (!matcher.hasMatch(word)) {
-        // console.log(word + "working");
         return word;
       }
     });
+
+    //call the api again to replace the word
     if (filteredWords.length !== wordQuantity) {
 
-      console.log(filteredWords.length, wordQuantity);
+    //define new word quantity based on how many words are remaining after the filter
       const newQuantity = wordQuantity - filteredWords.length;
       return fetch(`https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`)
         .then((response) => response.json())
         .then((words) => {
           console.log(words + "ME", words.length);
+
+          //recursive call to ensure new word(s) does not contain profanity
           const replacement = this.wordFilter(words, words.length, wordLength);
           console.log(filteredWords, "not");
 
@@ -385,53 +390,30 @@ export class BaseLevel extends Phaser.Scene {
           // Add the received words to this.calledWords
           console.log(words, 'before');
           words.pop();
+          words.pop();
 
           words.push('cunty');
-          return words
+          words.push('fuck');
+
+          this.firstPass.push(...words);
         })
-        .then((content) => {
-          console.log(content, 'after');
-          // this.wordFilter(words, fetchQuantity, length)
-          //   .then((response) => {
-          //         this.firstPass.push(...response);
-          //         console.log(this.calledWords);
-          //         // return response;
-
-
-          //         // this.firstPass = this.wordFilter(words, fetchQuantity, length)
-          //         //   .then((response) => {
-          //           //     this.firstPass.push(...response);
-          //           //     console.log(this.calledWords);
-          //           //     return response;
-          //           //   });
-
-          //           // this.calledWords.push(...this.firstPass);
-          //         });
-          this.firstPass.push(...content);
-          console.log(this.firstPass);
-
-          // console.log("START: ",filteredWords);
-        });
-
     });
 
     // Wait for all fetch requests to complete
     Promise.all(fetchPromises)
       .then(() => {
 
-        // Shuffle this.calledWords
         console.log(this.calledWords);
         console.log(this.firstPass);
-        // this.wordFilter(words, fetchQuantity, length);
         this.wordFilter(this.firstPass, this.wordConfig[0].quantity, this.wordConfig[0].length)
           .then((response) => {
             this.calledWords.push(...response);
             console.log(this.calledWords);
 
-            // return response;
 
         console.log(this.calledWords);
 
+        // Shuffle this.calledWords
         for (let i = this.calledWords.length - 1; i > 0; i--) {
           var test = "YES";
           const j = Math.floor(Math.random() * (i + 1));
@@ -449,6 +431,7 @@ export class BaseLevel extends Phaser.Scene {
           callbackScope: this,
           repeat: this.calledWords.length - 1,
         });
+        this.firstPass = []
       });
 
 
