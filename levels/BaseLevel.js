@@ -362,7 +362,6 @@ export class BaseLevel extends Phaser.Scene {
       return fetch(`https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`)
         .then((response) => response.json())
         .then((words) => {
-          console.log(words + "ME", words.length);
 
           //recursive call to ensure new word(s) does not contain profanity
           const replacement = this.wordFilter(words, words.length, wordLength);
@@ -373,7 +372,6 @@ export class BaseLevel extends Phaser.Scene {
         });
     }
 
-    console.log(filteredWords, "ME");
     return filteredWords;
   }
 
