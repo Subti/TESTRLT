@@ -225,7 +225,7 @@ export class BaseLevel extends Phaser.Scene {
       if (event.key === "Backspace") {
         this.currentWord = this.currentWord.slice(0, -1);
       } else if (event.code === "Space") {
-        this.currentWord = '';
+        this.currentWord = ''
       }
       else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
         this.currentWord += event.key;
@@ -330,7 +330,7 @@ export class BaseLevel extends Phaser.Scene {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
         // Transition to win scene
-        if (this.registry.get("loginID")) {
+        if (this.registry.get("loginID") && !this.nextSceneKey) {
           submitScore(
             this.registry.get("points"),
             this.registry.get("loginID")
@@ -683,7 +683,7 @@ export class BaseLevel extends Phaser.Scene {
         this.scene.start("PowerUp", { nextSceneKey: this.nextSceneKey });
       } else {
         // Transition to win scene
-        if (this.registry.get("loginID")) {
+        if (this.registry.get("loginID") && !this.nextSceneKey) {
           submitScore(
             this.registry.get("points"),
             this.registry.get("loginID")
