@@ -347,7 +347,7 @@ export class BaseLevel extends Phaser.Scene {
   }
   wordFilter(words, wordQuantity, wordLength) {
     let filteredWords = words.filter((word) => {
-
+      
       //use imported package to check for profanity, if a word does contain profanity, it gets filtered out
       if (!matcher.hasMatch(word)) {
         return word;
@@ -357,22 +357,21 @@ export class BaseLevel extends Phaser.Scene {
     //call the api again to replace the word
     if (filteredWords.length !== wordQuantity) {
 
-    //define new word quantity based on how many words are remaining after the filter
+      //define new word quantity based on how many words are remaining after the filter
       const newQuantity = wordQuantity - filteredWords.length;
-      return fetch(`https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`)
+       fetch(`https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`)
         .then((response) => response.json())
         .then((words) => {
 
           //recursive call to ensure new word(s) does not contain profanity
           const replacement = this.wordFilter(words, words.length, wordLength);
-          console.log(filteredWords, "not");
 
           filteredWords = filteredWords.concat(replacement);
           return filteredWords;
         });
     }
+    return Promise.resolve(filteredWords);
 
-    return filteredWords;
   }
 
   fetchWords() {
@@ -383,57 +382,43 @@ export class BaseLevel extends Phaser.Scene {
       const url = `https://random-word-api.herokuapp.com/word?number=${fetchQuantity}&length=${length}`;
 
       return fetch(url)
-        .then((response) => response.json())
+        .then((firstResponse) => firstResponse.json())
         .then((words) => {
           // Add the received words to this.calledWords
-          console.log(words, 'before');
-          words.pop();
-          words.pop();
-
-          words.push('cunty');
-          words.push('fuck');
-
-          this.firstPass.push(...words);
-        })
+          this.firstPass = [...words]
+          this.wordFilter(this.firstPass, this.wordConfig[0].quantity, this.wordConfig[0].length)
+          .then((response) => {
+            this.calledWords.push(...response);
+          })
+        });
     });
 
     // Wait for all fetch requests to complete
     Promise.all(fetchPromises)
       .then(() => {
-
-        console.log(this.calledWords);
-        console.log(this.firstPass);
-        this.wordFilter(this.firstPass, this.wordConfig[0].quantity, this.wordConfig[0].length)
-          .then((response) => {
-            this.calledWords.push(...response);
-            console.log(this.calledWords);
-
-
-        console.log(this.calledWords);
-
-        // Shuffle this.calledWords
-        for (let i = this.calledWords.length - 1; i > 0; i--) {
-          var test = "YES";
-          const j = Math.floor(Math.random() * (i + 1));
-          [this.calledWords[i], this.calledWords[j]] = [
-            this.calledWords[j],
-            this.calledWords[i],
-          ];
-        }
-        
-
-        this.registry.set("loaded", true);
-        this.time.addEvent({
-          delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
-          callback: this.loadWord,
-          callbackScope: this,
-          repeat: this.calledWords.length - 1,
-        });
-        this.firstPass = []
-      });
+            // Shuffle this.calledWords
+            for (let i = this.calledWords.length - 1; i > 0; i--) {
+              var test = "YES";
+              const j = Math.floor(Math.random() * (i + 1));
+              [this.calledWords[i], this.calledWords[j]] = [
+                this.calledWords[j],
+                this.calledWords[i],
+              ];
+            }
 
 
-      });
+            this.registry.set("loaded", true);
+            this.time.addEvent({
+              delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
+              callback: this.loadWord,
+              callbackScope: this,
+              repeat: this.calledWords.length - 1,
+            });
+            this.firstPass = [];
+          });
+
+
+      // });
   }
 
   // Function to load words from API call
