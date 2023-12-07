@@ -21,7 +21,7 @@ export class MenuScene extends Phaser.Scene {
     this.registry.set("activePowerUps", []);
     this.registry.set("winSceneCount", 1);
     this.add.image(600, 300, "bg");
-    this.sound.play("mainMenu", { loop: true, volume: 0.2 });
+    this.sound.play("mainMenu", { loop: true, volume: 0.1 });
     this.events.on("shutdown", () => {
       this.sound.removeByKey("mainMenu");
     });

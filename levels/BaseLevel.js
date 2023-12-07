@@ -5,7 +5,7 @@ import {
   TextCensor,
   englishDataset,
   englishRecommendedTransformers,
-} from 'obscenity';
+} from "obscenity";
 
 const matcher = new RegExpMatcher({
   ...englishDataset.build(),
@@ -32,7 +32,7 @@ export class BaseLevel extends Phaser.Scene {
     this.calledWords = [];
     this.activePowerUps = [];
     this.comboCounter = 0;
-    this.wordDelay = { min: 500, max: 1000 };
+    this.wordDelay = { min: 1000, max: 1500 };
     this.width = 1200;
     this.height = 600;
   }
@@ -225,9 +225,8 @@ export class BaseLevel extends Phaser.Scene {
       if (event.key === "Backspace") {
         this.currentWord = this.currentWord.slice(0, -1);
       } else if (event.code === "Space") {
-        this.currentWord = ''
-      }
-      else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
+        this.currentWord = "";
+      } else if (event.key.length === 1 && /^[a-zA-Z0-9-]$/i.test(event.key)) {
         this.currentWord += event.key;
       }
 
@@ -261,7 +260,7 @@ export class BaseLevel extends Phaser.Scene {
         )} | Lives: ${this.registry.get("lives")}`
       );
 
-      this.loseLife.play({ volume: 0.1 });
+      this.loseLife.play({ volume: 0.05 });
 
       // Destroy the word sprite
       word.destroy();
@@ -347,7 +346,6 @@ export class BaseLevel extends Phaser.Scene {
   }
   wordFilter(words, wordQuantity, wordLength) {
     let filteredWords = words.filter((word) => {
-      
       //use imported package to check for profanity, if a word does contain profanity, it gets filtered out
       if (!matcher.hasMatch(word)) {
         return word;
@@ -356,13 +354,13 @@ export class BaseLevel extends Phaser.Scene {
 
     //call the api again to replace the word
     if (filteredWords.length !== wordQuantity) {
-
       //define new word quantity based on how many words are remaining after the filter
       const newQuantity = wordQuantity - filteredWords.length;
-       fetch(`https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`)
+      fetch(
+        `https://random-word-api.herokuapp.com/word?number=${newQuantity}&length=${wordLength}`
+      )
         .then((response) => response.json())
         .then((words) => {
-
           //recursive call to ensure new word(s) does not contain profanity
           const replacement = this.wordFilter(words, words.length, wordLength);
 
@@ -371,7 +369,6 @@ export class BaseLevel extends Phaser.Scene {
         });
     }
     return Promise.resolve(filteredWords);
-
   }
 
   fetchWords() {
@@ -385,39 +382,39 @@ export class BaseLevel extends Phaser.Scene {
         .then((firstResponse) => firstResponse.json())
         .then((words) => {
           // Add the received words to this.calledWords
-          this.firstPass = [...words]
-          this.wordFilter(this.firstPass, this.wordConfig[0].quantity, this.wordConfig[0].length)
-          .then((response) => {
+          this.firstPass = [...words];
+          this.wordFilter(
+            this.firstPass,
+            this.wordConfig[0].quantity,
+            this.wordConfig[0].length
+          ).then((response) => {
             this.calledWords.push(...response);
-          })
+          });
         });
     });
 
     // Wait for all fetch requests to complete
-    Promise.all(fetchPromises)
-      .then(() => {
-            // Shuffle this.calledWords
-            for (let i = this.calledWords.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [this.calledWords[i], this.calledWords[j]] = [
-                this.calledWords[j],
-                this.calledWords[i],
-              ];
-            }
+    Promise.all(fetchPromises).then(() => {
+      // Shuffle this.calledWords
+      for (let i = this.calledWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.calledWords[i], this.calledWords[j]] = [
+          this.calledWords[j],
+          this.calledWords[i],
+        ];
+      }
 
+      this.registry.set("loaded", true);
+      this.time.addEvent({
+        delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
+        callback: this.loadWord,
+        callbackScope: this,
+        repeat: this.calledWords.length - 1,
+      });
+      this.firstPass = [];
+    });
 
-            this.registry.set("loaded", true);
-            this.time.addEvent({
-              delay: Phaser.Math.Between(this.wordDelay.min, this.wordDelay.max),
-              callback: this.loadWord,
-              callbackScope: this,
-              repeat: this.calledWords.length - 1,
-            });
-            this.firstPass = [];
-          });
-
-
-      // });
+    // });
   }
 
   // Function to load words from API call
@@ -602,7 +599,8 @@ export class BaseLevel extends Phaser.Scene {
 
         // Update the score text
         this.playerStats.setText(
-          `Level: ${this.levelNumber
+          `Level: ${
+            this.levelNumber
           } | Score: ${newScore} | Lives: ${this.registry.get("lives")}`
         );
 
@@ -610,7 +608,8 @@ export class BaseLevel extends Phaser.Scene {
         if (newScore >= this.targetScore) {
           this.registry.set("points", this.targetScore);
           this.playerStats.setText(
-            `Level: ${this.levelNumber} | Score: ${this.targetScore
+            `Level: ${this.levelNumber} | Score: ${
+              this.targetScore
             } | Lives: ${this.registry.get("lives")}`
           );
           this.scoreAnimation.remove(false);
