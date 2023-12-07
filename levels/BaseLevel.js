@@ -398,7 +398,6 @@ export class BaseLevel extends Phaser.Scene {
       .then(() => {
             // Shuffle this.calledWords
             for (let i = this.calledWords.length - 1; i > 0; i--) {
-              var test = "YES";
               const j = Math.floor(Math.random() * (i + 1));
               [this.calledWords[i], this.calledWords[j]] = [
                 this.calledWords[j],
