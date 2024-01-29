@@ -1,4 +1,4 @@
-# Welcome to the Roguelike Typing Game!
+# Welcome to Keyboard Warrior!
 
 ![Game Image](https://github.com/Subti/TESTRLT/blob/main/docs/game_end_level.png?raw=true)
 
