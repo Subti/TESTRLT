@@ -1,3 +1,11 @@
+# Welcome to the Roguelike Typing Game!
+
+![Game Image](https://github.com/Subti/TESTRLT/blob/main/docs/game_end_level.png?raw=true)
+
+# Connecting to database
+If using WSL2, in the project root folder insert this command in your VM terminal
+
+
 # Connecting to database
 If using WSL2, in the project root folder insert this command in your VM terminal
 ```cp .env.example .env```
