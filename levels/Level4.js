@@ -6,7 +6,7 @@ export class Level4 extends BaseLevel {
       "Level4",
       [
         { length: 4, quantity: 15 },
-        { length: 3, quantity: 15 },
+        { length: 3, quantity: 5 },
       ],
       50,
       "Level5"

@@ -32,7 +32,10 @@ export class BaseLevel extends Phaser.Scene {
     this.calledWords = [];
     this.activePowerUps = [];
     this.comboCounter = 0;
-    this.wordDelay = { min: 1000, max: 1500 };
+    this.wordDelay = {
+      min: 1000 / (1 + this.levelNumber / 30),
+      max: 1500 / (1 + this.levelNumber / 30),
+    };
     this.width = 1200;
     this.height = 600;
   }
@@ -423,7 +426,7 @@ export class BaseLevel extends Phaser.Scene {
 
     let velocityY = Phaser.Math.FloatBetween(
       this.fallSpeed,
-      1.5 * this.fallSpeed
+      1.2 * this.fallSpeed
     );
 
     const chunky = this.activePowerUps.find(

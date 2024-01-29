@@ -5,6 +5,8 @@ export class Level15 extends BaseLevel {
     super(
       "Level15",
       [
+        { length: 3, quantity: 5 },
+        { length: 4, quantity: 5 },
         { length: 5, quantity: 10 },
         { length: 6, quantity: 15 },
         { length: 7, quantity: 15 },
